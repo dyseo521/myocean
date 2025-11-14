@@ -1,19 +1,40 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { calculateTotalDonationForHotspot } from '@/utils/donation';
+import Image from 'next/image';
 
 interface DetectionSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+// 소나 이미지 파일명 리스트 (실제 파일명에 맞게 수정 필요)
+const SONAR_IMAGES = [
+  'sonar1.jpg',
+  'sonar2.jpg',
+  'sonar3.jpg',
+  'sonar4.jpg',
+  'sonar5.jpg',
+  'sonar6.jpg',
+  'sonar7.jpg',
+  'sonar8.jpg',
+  'sonar9.jpg',
+  'sonar10.jpg',
+];
+
 const DetectionSuccessModal = ({ isOpen, onClose }: DetectionSuccessModalProps) => {
   const selectedHotspot = useStore((state) => state.selectedHotspot);
   const donations = useStore((state) => state.donations);
   const [address, setAddress] = useState<string>('');
+
+  // 랜덤 소나 이미지 선택 (모달이 열릴 때마다 새로 선택)
+  const randomSonarImage = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * SONAR_IMAGES.length);
+    return `/data/image/${SONAR_IMAGES[randomIndex]}`;
+  }, [isOpen]);
 
   // 주소 가져오기
   useEffect(() => {
@@ -109,18 +130,32 @@ const DetectionSuccessModal = ({ isOpen, onClose }: DetectionSuccessModalProps) 
                 <span className="text-xs text-emerald-600 font-semibold">신뢰도: 88%</span>
               </div>
 
-              {/* 이미지 플레이스홀더 (소나 이미지는 data/image 폴더에 있지만 gitignore) */}
+              {/* SONAR 탐지 이미지 */}
               <div className="relative aspect-video bg-gradient-to-br from-blue-900 to-teal-900 rounded-xl overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-white">
+                {/* 소나 이미지 */}
+                <Image
+                  src={randomSonarImage}
+                  alt="SONAR 탐지 이미지"
+                  fill
+                  className="object-cover"
+                  onError={(e) => {
+                    // 이미지 로드 실패시 placeholder 표시
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+
+                {/* 이미지 로드 실패시 표시될 fallback */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="text-center text-white opacity-50">
                     <div className="text-6xl mb-2">🌊</div>
-                    <p className="text-sm opacity-75">해양 쓰레기 탐지 완료</p>
-                    <p className="text-xs opacity-50 mt-1">SONAR 이미지 처리 중</p>
+                    <p className="text-sm">SONAR 이미지</p>
                   </div>
                 </div>
+
                 {/* 스캔라인 효과 */}
                 <motion.div
-                  className="absolute top-0 left-0 right-0 h-1 bg-cyan-400 shadow-lg shadow-cyan-400/50"
+                  className="absolute top-0 left-0 right-0 h-1 bg-cyan-400 shadow-lg shadow-cyan-400/50 z-10"
                   animate={{
                     y: [0, 200, 0],
                   }}
@@ -130,8 +165,9 @@ const DetectionSuccessModal = ({ isOpen, onClose }: DetectionSuccessModalProps) 
                     ease: "linear",
                   }}
                 />
+
                 {/* 레포트 후처리 라벨 */}
-                <div className="absolute top-3 left-3 px-2 py-1 bg-black bg-opacity-60 text-white text-xs rounded flex items-center gap-1">
+                <div className="absolute top-3 left-3 px-2 py-1 bg-black bg-opacity-60 text-white text-xs rounded flex items-center gap-1 z-10">
                   <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                   <span>레포트 후처리</span>
                 </div>
