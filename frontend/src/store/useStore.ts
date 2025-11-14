@@ -110,6 +110,10 @@ export const useStore = create<AppState>((set, get) => ({
   loadDonations: () => {
     const donations = getDonations();
     const user = getCurrentUser();
+    console.log(`[useStore] loadDonations 실행 - ${donations.length}개 로드됨`);
+    if (donations.length > 0) {
+      console.log('[useStore] 첫 번째 기부 데이터:', donations[0]);
+    }
     set({
       donations,
       user,

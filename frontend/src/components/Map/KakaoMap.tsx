@@ -168,6 +168,8 @@ const KakaoMap = () => {
   useEffect(() => {
     if (!isLoaded || !map || !window.kakao) return;
 
+    console.log(`[KakaoMap] 기부 영역 렌더링 - 총 ${donations.length}개`);
+
     // 기존 폴리곤 제거
     polygonsRef.current.forEach((polygon) => polygon.setMap(null));
     polygonsRef.current = [];
@@ -177,7 +179,8 @@ const KakaoMap = () => {
     overlaysRef.current = [];
 
     // 기부 영역 및 이름 렌더링
-    donations.forEach((donation) => {
+    let polygonCount = 0;
+    donations.forEach((donation, index) => {
       // 기부 영역이 있으면 Polygon(마름모) 표시
       if (donation.polygon && donation.polygon.length > 0) {
         const path = donation.polygon.map(
@@ -196,6 +199,15 @@ const KakaoMap = () => {
 
         polygon.setMap(map);
         polygonsRef.current.push(polygon);
+        polygonCount++;
+
+        if (index === 0) {
+          console.log('[KakaoMap] 첫 번째 기부 영역:', donation);
+        }
+      } else {
+        if (index === 0) {
+          console.warn('[KakaoMap] 첫 번째 기부 데이터에 polygon 없음:', donation);
+        }
       }
 
       // 기부자 이름 오버레이
@@ -222,6 +234,8 @@ const KakaoMap = () => {
       overlay.setMap(map);
       overlaysRef.current.push(overlay);
     });
+
+    console.log(`[KakaoMap] 렌더링 완료 - Polygon: ${polygonCount}개, Overlay: ${overlaysRef.current.length}개`);
 
     return () => {
       polygonsRef.current.forEach((polygon) => polygon.setMap(null));

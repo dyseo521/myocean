@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Donation } from '@/types';
 import { calculateDiamondPolygon, calculateDonationArea } from '@/utils/donation';
@@ -8,6 +8,20 @@ import { calculateDiamondPolygon, calculateDonationArea } from '@/utils/donation
 export default function DonateDemo() {
   const router = useRouter();
   const [status, setStatus] = useState<string>('');
+  const [currentCount, setCurrentCount] = useState<number>(0);
+
+  // 현재 저장된 데이터 개수 확인
+  useEffect(() => {
+    const existingDonations = localStorage.getItem('donations');
+    if (existingDonations) {
+      try {
+        const data = JSON.parse(existingDonations);
+        setCurrentCount(Array.isArray(data) ? data.length : 0);
+      } catch (e) {
+        setCurrentCount(0);
+      }
+    }
+  }, [status]);
 
   // 더미 기부자 이름들
   const dummyDonors = [
@@ -104,11 +118,29 @@ export default function DonateDemo() {
 
   const handleReset = () => {
     localStorage.removeItem('donations');
+    setCurrentCount(0);
     setStatus('🗑️ 모든 기부 데이터가 삭제되었습니다.');
 
     setTimeout(() => {
       window.location.href = '/';
     }, 2000);
+  };
+
+  const handleInspect = () => {
+    const existingDonations = localStorage.getItem('donations');
+    if (!existingDonations) {
+      setStatus('❌ 저장된 데이터가 없습니다.');
+      return;
+    }
+
+    try {
+      const data = JSON.parse(existingDonations);
+      const withPolygon = data.filter((d: Donation) => d.polygon && d.polygon.length > 0).length;
+      setStatus(`✅ 총 ${data.length}개 (polygon 있음: ${withPolygon}개)`);
+      console.log('첫 번째 데이터 샘플:', data[0]);
+    } catch (e) {
+      setStatus(`❌ 데이터 파싱 오류: ${e}`);
+    }
   };
 
   return (
@@ -120,6 +152,12 @@ export default function DonateDemo() {
         </div>
 
         <div className="space-y-4">
+          {/* 현재 데이터 개수 */}
+          <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl p-4 text-center">
+            <p className="text-sm opacity-90 mb-1">현재 저장된 기부 데이터</p>
+            <p className="text-4xl font-bold">{currentCount}개</p>
+          </div>
+
           <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
             <h2 className="font-bold text-slate-800 mb-2">📊 데모 데이터 생성</h2>
             <p className="text-sm text-slate-600 mb-4">
@@ -146,6 +184,19 @@ export default function DonateDemo() {
                 100개
               </button>
             </div>
+          </div>
+
+          <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
+            <h2 className="font-bold text-slate-800 mb-2">🔍 데이터 검사</h2>
+            <p className="text-sm text-slate-600 mb-4">
+              저장된 데이터를 확인합니다 (콘솔에 샘플 출력).
+            </p>
+            <button
+              onClick={handleInspect}
+              className="w-full py-2 px-4 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 active:scale-95 transition-all"
+            >
+              데이터 검사
+            </button>
           </div>
 
           <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
