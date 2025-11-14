@@ -45,10 +45,10 @@ interface AppState {
 }
 
 export const useStore = create<AppState>((set, get) => ({
-  // 초기 상태
-  user: getCurrentUser(),
-  isLoggedIn: !!getCurrentUser(),
-  donations: getDonations(),
+  // 초기 상태 - SSR 호환을 위해 null/빈 배열로 시작
+  user: null,
+  isLoggedIn: false,
+  donations: [],
   selectedHotspot: null,
   showDonateModal: false,
   showMyOceanModal: false,
@@ -81,7 +81,13 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   loadDonations: () => {
-    set({ donations: getDonations() });
+    const donations = getDonations();
+    const user = getCurrentUser();
+    set({
+      donations,
+      user,
+      isLoggedIn: !!user
+    });
   },
 
   // 핫스팟 선택
