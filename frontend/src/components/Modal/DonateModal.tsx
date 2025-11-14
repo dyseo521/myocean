@@ -114,15 +114,20 @@ const DonateModal = () => {
 
   return (
     <AnimatePresence>
-      <div className="modal-backdrop" onClick={(e) => {
-        if (step !== 'complete') e.stopPropagation();
-      }}>
+      <div
+        className="absolute inset-0 bg-black bg-opacity-50 z-50"
+        onClick={(e) => {
+          if (step !== 'complete') {
+            e.stopPropagation();
+          }
+        }}
+      >
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="fixed inset-0 z-50 flex items-end justify-center p-0"
+          className="absolute inset-0 flex items-end justify-center p-0"
         >
           <div className="bg-white rounded-t-3xl shadow-2xl p-6 w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
             {/* Step 1: 금액 선택 */}

@@ -22,15 +22,15 @@ const RankingModal = () => {
 
   return (
     <AnimatePresence>
-      <div className="modal-backdrop" onClick={() => setShowRankingModal(false)}>
+      <div className="absolute inset-0 bg-black bg-opacity-50 z-50" onClick={() => setShowRankingModal(false)}>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
+          className="absolute inset-0 flex items-end justify-center p-0"
         >
-          <div className="bg-white rounded-t-3xl md:rounded-2xl shadow-2xl p-5 md:p-6 w-full md:max-w-md md:mx-4 max-h-[85vh] md:max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <div className="bg-white rounded-t-3xl shadow-2xl p-6 w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-6">
               <div>
