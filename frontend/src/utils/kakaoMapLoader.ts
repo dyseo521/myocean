@@ -37,15 +37,14 @@ export const loadKakaoMapScript = (): Promise<void> => {
     // 스크립트 생성
     const script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&libraries=services,clusterer,drawing&autoload=false`;
+    // autoload=true로 변경하여 스크립트 로드 시 자동으로 초기화
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&libraries=services,clusterer,drawing&autoload=true`;
 
     script.onload = () => {
-      // autoload=false 옵션을 사용했으므로 수동으로 load 호출
-      window.kakao.maps.load(() => {
-        isLoading = false;
-        isLoaded = true;
-        resolve();
-      });
+      // autoload=true를 사용하므로 바로 사용 가능
+      isLoading = false;
+      isLoaded = true;
+      resolve();
     };
 
     script.onerror = () => {
