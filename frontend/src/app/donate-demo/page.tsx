@@ -93,9 +93,9 @@ export default function DonateDemo() {
       const generated = generateRandomDonations(count);
       setStatus(`✅ ${generated}개의 더미 기부 데이터가 생성되었습니다!`);
 
-      // 2초 후 메인 페이지로 이동
+      // 2초 후 메인 페이지로 이동 (전체 리로드)
       setTimeout(() => {
-        router.push('/');
+        window.location.href = '/';
       }, 2000);
     } catch (error) {
       setStatus(`❌ 오류 발생: ${error}`);
@@ -107,7 +107,7 @@ export default function DonateDemo() {
     setStatus('🗑️ 모든 기부 데이터가 삭제되었습니다.');
 
     setTimeout(() => {
-      router.push('/');
+      window.location.href = '/';
     }, 2000);
   };
 
