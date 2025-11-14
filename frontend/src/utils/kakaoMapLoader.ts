@@ -8,8 +8,8 @@ let isLoaded = false;
 
 export const loadKakaoMapScript = (): Promise<void> => {
   return new Promise((resolve, reject) => {
-    // 이미 로드되었으면 즉시 반환
-    if (isLoaded && window.kakao && window.kakao.maps) {
+    // 이미 로드되었고 API가 사용 가능하면 즉시 반환
+    if (isLoaded && window.kakao && window.kakao.maps && window.kakao.maps.LatLng) {
       resolve();
       return;
     }
@@ -17,8 +17,9 @@ export const loadKakaoMapScript = (): Promise<void> => {
     // 로딩 중이면 대기
     if (isLoading) {
       const checkInterval = setInterval(() => {
-        if (window.kakao && window.kakao.maps) {
+        if (window.kakao && window.kakao.maps && window.kakao.maps.LatLng) {
           clearInterval(checkInterval);
+          isLoaded = true;
           resolve();
         }
       }, 100);
@@ -37,14 +38,35 @@ export const loadKakaoMapScript = (): Promise<void> => {
     // 스크립트 생성
     const script = document.createElement('script');
     script.type = 'text/javascript';
-    // autoload=true로 변경하여 스크립트 로드 시 자동으로 초기화
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&libraries=services,clusterer,drawing&autoload=true`;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&libraries=services,clusterer,drawing&autoload=false`;
 
     script.onload = () => {
-      // autoload=true를 사용하므로 바로 사용 가능
-      isLoading = false;
-      isLoaded = true;
-      resolve();
+      // kakao.maps.load()로 명시적으로 로드
+      if (window.kakao && window.kakao.maps) {
+        window.kakao.maps.load(() => {
+          // LatLng이 실제로 사용 가능한지 확인
+          const checkReady = setInterval(() => {
+            if (window.kakao.maps.LatLng) {
+              clearInterval(checkReady);
+              isLoading = false;
+              isLoaded = true;
+              resolve();
+            }
+          }, 50);
+
+          // 5초 타임아웃
+          setTimeout(() => {
+            clearInterval(checkReady);
+            if (!isLoaded) {
+              isLoading = false;
+              reject(new Error('카카오맵 API 초기화 타임아웃'));
+            }
+          }, 5000);
+        });
+      } else {
+        isLoading = false;
+        reject(new Error('카카오맵 객체를 찾을 수 없습니다.'));
+      }
     };
 
     script.onerror = () => {
