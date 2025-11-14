@@ -26,7 +26,7 @@ export const loadKakaoMapScript = (): Promise<void> => {
     }
 
     // API 키 확인
-    const appKey = (import.meta as any).env.VITE_KAKAO_MAP_APP_KEY;
+    const appKey = import.meta.env.VITE_KAKAO_MAP_APP_KEY;
     if (!appKey) {
       reject(new Error('카카오맵 API 키가 설정되지 않았습니다. .env 파일에 VITE_KAKAO_MAP_APP_KEY를 설정해주세요.'));
       return;
