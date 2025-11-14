@@ -16,6 +16,7 @@ const KakaoMap = () => {
   const circlesRef = useRef<any[]>([]);
   const overlaysRef = useRef<any[]>([]);
 
+  const mode = useStore((state) => state.mode);
   const showFishingLayer = useStore((state) => state.showFishingLayer);
   const showDebrisLayer = useStore((state) => state.showDebrisLayer);
   const setSelectedHotspot = useStore((state) => state.setSelectedHotspot);

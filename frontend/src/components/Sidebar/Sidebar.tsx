@@ -13,6 +13,9 @@ const Sidebar = () => {
   const isMobileMenuOpen = useStore((state) => state.isMobileMenuOpen);
   const setIsMobileMenuOpen = useStore((state) => state.setIsMobileMenuOpen);
 
+  const mode = useStore((state) => state.mode);
+  const setMode = useStore((state) => state.setMode);
+
   const showFishingLayer = useStore((state) => state.showFishingLayer);
   const showDebrisLayer = useStore((state) => state.showDebrisLayer);
   const toggleFishingLayer = useStore((state) => state.toggleFishingLayer);
@@ -88,17 +91,42 @@ const Sidebar = () => {
 
                 {/* 주요 액션 버튼들 */}
                 <div className="space-y-3">
-                  <DonateButton />
-                  {user && <MyOceanButton />}
-                  <button
-                    onClick={() => {
-                      setShowRankingModal(true);
-                      closeMobileMenu();
-                    }}
-                    className="w-full btn btn-outline py-3 text-base"
-                  >
-                    🏆 기부 랭킹
-                  </button>
+                  {mode === 'funding' ? (
+                    <>
+                      <DonateButton />
+                      {user && <MyOceanButton />}
+                      <button
+                        onClick={() => {
+                          setShowRankingModal(true);
+                          closeMobileMenu();
+                        }}
+                        className="w-full btn btn-outline py-3 text-base"
+                      >
+                        🏆 기부 랭킹
+                      </button>
+                      <button
+                        onClick={() => {
+                          setMode('collection');
+                          closeMobileMenu();
+                        }}
+                        className="w-full btn bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-3 text-base font-bold shadow-lg hover:shadow-xl transition-shadow"
+                      >
+                        🚢 수거모드
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setMode('funding');
+                          closeMobileMenu();
+                        }}
+                        className="w-full btn bg-gradient-to-r from-sky-400 to-blue-500 text-white py-3 text-base font-bold shadow-lg hover:shadow-xl transition-shadow"
+                      >
+                        💝 펀딩모드
+                      </button>
+                    </>
+                  )}
                 </div>
 
                 {/* 지도 레이어 설정 */}

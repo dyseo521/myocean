@@ -7,6 +7,7 @@ export interface Hotspot {
   activityCount: number;
   type: 'fishing' | 'debris';
   regionName?: string;
+  targetAmount?: number; // 목표 금액 (원)
 }
 
 // 기부 정보 타입

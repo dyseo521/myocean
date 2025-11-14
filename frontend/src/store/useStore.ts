@@ -11,6 +11,10 @@ interface AppState {
   login: (name: string) => void;
   logout: () => void;
 
+  // 모드 관련
+  mode: 'funding' | 'collection';
+  setMode: (mode: 'funding' | 'collection') => void;
+
   // 기부 관련
   donations: Donation[];
   addDonation: (donation: Donation) => void;
@@ -54,6 +58,7 @@ export const useStore = create<AppState>((set, get) => ({
   // 초기 상태 - SSR 호환을 위해 null/빈 배열로 시작
   user: null,
   isLoggedIn: false,
+  mode: 'funding',
   donations: [],
   selectedHotspot: null,
   showDonateModal: false,
@@ -79,6 +84,11 @@ export const useStore = create<AppState>((set, get) => ({
   logout: () => {
     clearUser();
     set({ user: null, isLoggedIn: false });
+  },
+
+  // 모드 액션
+  setMode: (mode: 'funding' | 'collection') => {
+    set({ mode });
   },
 
   // 기부 액션
