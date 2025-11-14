@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import { useStore } from '@/store/useStore';
 import LoginButton from './LoginButton';
 import DonateButton from './DonateButton';
 import MyOceanButton from './MyOceanButton';
 
 const Sidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const user = useStore((state) => state.user);
   const setShowRankingModal = useStore((state) => state.setShowRankingModal);
 

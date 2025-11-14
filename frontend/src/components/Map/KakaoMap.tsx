@@ -3,7 +3,6 @@ import { useKakaoMap } from '@/hooks/useKakaoMap';
 import { useHotspots } from '@/hooks/useHotspots';
 import { useStore } from '@/store/useStore';
 import { getHotspotColor, getHotspotRadius } from '@/utils/donation';
-import DonationOverlay from './DonationOverlay';
 
 const KakaoMap = () => {
   const { map, isLoaded, error } = useKakaoMap('map-container', {
