@@ -34,17 +34,18 @@ const HotspotDetailModal = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="modal-container"
+          className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
         >
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <div className="bg-white rounded-t-3xl md:rounded-2xl shadow-2xl p-6 w-full md:max-w-md md:mx-4 max-h-[85vh] md:max-h-[80vh] overflow-y-auto custom-scrollbar">
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-xl font-bold text-slate-800">
+              <h2 className="text-lg md:text-xl font-bold text-slate-800">
                 {selectedHotspot.type === 'fishing' ? '⚓ 조업활동 지역' : '🗑️ 해양쓰레기 지역'}
               </h2>
               <button
                 onClick={() => setSelectedHotspot(null)}
-                className="text-slate-400 hover:text-slate-600 text-2xl"
+                className="text-slate-400 hover:text-slate-600 text-3xl w-10 h-10 flex items-center justify-center -mr-2 -mt-2"
+                aria-label="닫기"
               >
                 ×
               </button>
@@ -115,7 +116,7 @@ const HotspotDetailModal = () => {
             {/* 기부 버튼 */}
             <button
               onClick={handleDonate}
-              className="w-full btn btn-primary py-3 text-base shadow-lg"
+              className="w-full btn btn-primary py-4 text-base md:text-lg shadow-lg active:scale-95 transition-transform"
             >
               💝 이 지역에 기부하기
             </button>

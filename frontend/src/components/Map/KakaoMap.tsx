@@ -126,8 +126,8 @@ const KakaoMap = () => {
     <>
       <div id="map-container" className="w-full h-full" />
 
-      {/* 범례 */}
-      <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3 z-20">
+      {/* 범례 (데스크톱만) */}
+      <div className="hidden md:block absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3 z-20">
         <h3 className="text-sm font-bold mb-2 text-slate-700">범례</h3>
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -141,13 +141,13 @@ const KakaoMap = () => {
         </div>
       </div>
 
-      {/* 레이어 토글 */}
+      {/* 레이어 토글 (데스크톱만) */}
       <LayerToggle />
     </>
   );
 };
 
-// 레이어 토글 컴포넌트
+// 레이어 토글 컴포넌트 (데스크톱만)
 const LayerToggle = () => {
   const showFishingLayer = useStore((state) => state.showFishingLayer);
   const showDebrisLayer = useStore((state) => state.showDebrisLayer);
@@ -155,7 +155,7 @@ const LayerToggle = () => {
   const toggleDebrisLayer = useStore((state) => state.toggleDebrisLayer);
 
   return (
-    <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-3 z-20">
+    <div className="hidden md:block absolute top-4 left-4 bg-white rounded-lg shadow-lg p-3 z-20">
       <h3 className="text-sm font-bold mb-2 text-slate-700">레이어</h3>
       <div className="space-y-2">
         <label className="flex items-center gap-2 cursor-pointer">

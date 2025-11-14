@@ -71,22 +71,23 @@ const DonateModal = () => {
     <AnimatePresence>
       <div className="modal-backdrop" onClick={handleClose}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="modal-container"
+          className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
         >
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-lg w-full mx-4">
+          <div className="bg-white rounded-t-3xl md:rounded-2xl shadow-2xl p-6 w-full md:max-w-lg md:mx-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">💝 기부하기</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-800">💝 기부하기</h2>
                 <p className="text-sm text-slate-600 mt-1">바다를 지키는 첫 걸음</p>
               </div>
               <button
                 onClick={handleClose}
-                className="text-slate-400 hover:text-slate-600 text-2xl"
+                className="text-slate-400 hover:text-slate-600 text-3xl w-10 h-10 flex items-center justify-center -mr-2 -mt-2"
+                aria-label="닫기"
               >
                 ×
               </button>
@@ -95,18 +96,18 @@ const DonateModal = () => {
             {/* 금액 선택 */}
             <div className="mb-6">
               <h3 className="text-sm font-bold text-slate-700 mb-3">기부 금액을 선택하세요</h3>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 md:gap-3">
                 {DONATION_AMOUNTS.map((amount) => (
                   <button
                     key={amount}
                     onClick={() => setSelectedAmount(amount)}
-                    className={`p-4 rounded-xl border-2 transition-all ${
+                    className={`p-3 md:p-4 rounded-xl border-2 transition-all active:scale-95 min-h-[80px] ${
                       selectedAmount === amount
                         ? 'border-ocean-primary bg-ocean-primary text-white shadow-lg scale-105'
                         : 'border-slate-200 hover:border-ocean-primary'
                     }`}
                   >
-                    <div className="text-lg font-bold">{formatAmount(amount)}</div>
+                    <div className="text-base md:text-lg font-bold">{formatAmount(amount)}</div>
                     <div className="text-xs mt-1 opacity-80">
                       {calculateDonationArea(amount)}km²
                     </div>
@@ -129,7 +130,7 @@ const DonateModal = () => {
                     </div>
                     <button
                       onClick={handleSelectLocation}
-                      className="btn btn-outline text-xs px-3 py-1"
+                      className="btn btn-outline text-xs px-3 py-2 min-h-[36px]"
                     >
                       변경
                     </button>
@@ -138,7 +139,7 @@ const DonateModal = () => {
               ) : (
                 <button
                   onClick={handleSelectLocation}
-                  className="w-full btn btn-outline py-4"
+                  className="w-full btn btn-outline py-4 text-base active:scale-95 transition-transform"
                   disabled={isSelectingLocation}
                 >
                   {isSelectingLocation ? '위치 선택 중...' : '📍 지도에서 위치 선택'}
@@ -171,7 +172,7 @@ const DonateModal = () => {
             <button
               onClick={handleDonate}
               disabled={!selectedLocation}
-              className="w-full btn btn-primary py-4 text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn btn-primary py-4 text-base md:text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 transition-transform"
             >
               ✨ 기부 완료하기
             </button>

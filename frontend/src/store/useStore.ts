@@ -26,6 +26,10 @@ interface AppState {
   setShowMyOceanModal: (show: boolean) => void;
   setShowRankingModal: (show: boolean) => void;
 
+  // 모바일 메뉴
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
+
   // 지도 레이어
   showFishingLayer: boolean;
   showDebrisLayer: boolean;
@@ -47,6 +51,7 @@ export const useStore = create<AppState>((set, get) => ({
   showDonateModal: false,
   showMyOceanModal: false,
   showRankingModal: false,
+  isMobileMenuOpen: false,
   showFishingLayer: true,
   showDebrisLayer: true,
   realtimeNotifications: [],
@@ -93,6 +98,11 @@ export const useStore = create<AppState>((set, get) => ({
 
   setShowRankingModal: (show: boolean) => {
     set({ showRankingModal: show });
+  },
+
+  // 모바일 메뉴 제어
+  setIsMobileMenuOpen: (open: boolean) => {
+    set({ isMobileMenuOpen: open });
   },
 
   // 레이어 토글

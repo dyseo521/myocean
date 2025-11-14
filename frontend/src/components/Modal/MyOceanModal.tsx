@@ -23,36 +23,37 @@ const MyOceanModal = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="modal-container"
+          className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
         >
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-2xl w-full mx-4 max-h-[85vh] overflow-y-auto custom-scrollbar">
+          <div className="bg-white rounded-t-3xl md:rounded-2xl shadow-2xl p-5 md:p-6 w-full md:max-w-2xl md:mx-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-gradient-ocean">🌊 나의 바다</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-gradient-ocean">🌊 나의 바다</h2>
                 <p className="text-sm text-slate-600 mt-1">{user.name}님의 기부 현황</p>
               </div>
               <button
                 onClick={() => setShowMyOceanModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-2xl"
+                className="text-slate-400 hover:text-slate-600 text-3xl w-10 h-10 flex items-center justify-center -mr-2 -mt-2"
+                aria-label="닫기"
               >
                 ×
               </button>
             </div>
 
             {/* 통계 요약 */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="card bg-gradient-to-br from-ocean-primary to-ocean-secondary text-white">
+            <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
+              <div className="card bg-gradient-to-br from-ocean-primary to-ocean-secondary text-white p-3 md:p-4">
                 <div className="text-xs opacity-90">총 기부 금액</div>
-                <div className="text-xl font-bold mt-1">{(totalAmount / 10000).toLocaleString()}만원</div>
+                <div className="text-base md:text-xl font-bold mt-1">{(totalAmount / 10000).toLocaleString()}만원</div>
               </div>
-              <div className="card bg-gradient-to-br from-ocean-secondary to-ocean-success text-white">
+              <div className="card bg-gradient-to-br from-ocean-secondary to-ocean-success text-white p-3 md:p-4">
                 <div className="text-xs opacity-90">기부 영역</div>
-                <div className="text-xl font-bold mt-1">{myDonations.length}곳</div>
+                <div className="text-base md:text-xl font-bold mt-1">{myDonations.length}곳</div>
               </div>
-              <div className="card bg-gradient-to-br from-ocean-success to-emerald-600 text-white">
+              <div className="card bg-gradient-to-br from-ocean-success to-emerald-600 text-white p-3 md:p-4">
                 <div className="text-xs opacity-90">정화 완료</div>
-                <div className="text-xl font-bold mt-1">{completedCount}곳</div>
+                <div className="text-base md:text-xl font-bold mt-1">{completedCount}곳</div>
               </div>
             </div>
 

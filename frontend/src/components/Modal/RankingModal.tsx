@@ -26,18 +26,19 @@ const RankingModal = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="modal-container"
+          className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
         >
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <div className="bg-white rounded-t-3xl md:rounded-2xl shadow-2xl p-5 md:p-6 w-full md:max-w-md md:mx-4 max-h-[85vh] md:max-h-[80vh] overflow-y-auto custom-scrollbar">
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">🏆 기부 랭킹</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-800">🏆 기부 랭킹</h2>
                 <p className="text-sm text-slate-600 mt-1">바다를 지킨 영웅들</p>
               </div>
               <button
                 onClick={() => setShowRankingModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-2xl"
+                className="text-slate-400 hover:text-slate-600 text-3xl w-10 h-10 flex items-center justify-center -mr-2 -mt-2"
+                aria-label="닫기"
               >
                 ×
               </button>

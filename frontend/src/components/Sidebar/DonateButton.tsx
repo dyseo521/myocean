@@ -15,7 +15,7 @@ const DonateButton = () => {
   return (
     <button
       onClick={handleClick}
-      className="btn btn-primary text-sm w-full shadow-lg"
+      className="btn btn-primary text-base w-full py-3 shadow-lg active:scale-95 transition-transform disabled:active:scale-100"
       disabled={!user}
     >
       💝 기부하기
