@@ -21,6 +21,12 @@ export default function Home() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
+      {/* 디버깅: 화면 크기 표시 (임시) */}
+      <div className="fixed top-2 left-2 z-[100] bg-red-500 text-white px-2 py-1 text-xs rounded">
+        <span className="inline md:hidden">📱 Mobile</span>
+        <span className="hidden md:inline">🖥️ Desktop</span>
+      </div>
+
       {/* 헤더 */}
       <header className="absolute top-0 left-0 right-0 z-30 bg-white shadow-md">
         <div className="px-4 py-2 md:py-3 flex items-center justify-between">
@@ -34,7 +40,7 @@ export default function Home() {
           {/* 모바일 햄버거 버튼 */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="md:hidden p-2 text-slate-600 hover:text-ocean-primary transition-colors active:scale-95"
+            className="md:hidden p-2 text-slate-600 hover:text-ocean-primary transition-colors active:scale-95 border-2 border-red-500"
             aria-label="메뉴 열기"
           >
             <svg
