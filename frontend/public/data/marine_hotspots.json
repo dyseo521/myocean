@@ -1,146 +1,624 @@
 {
   "metadata": {
-    "generated_at": "2025-11-14T21:57:00.000Z",
-    "fishing_records": 1250,
-    "debris_records": 890,
+    "generated_at": "2025-11-15T07:42:03.445735",
+    "fishing_records": 142718,
+    "debris_records": 1080,
     "grid_size_degrees": 0.1,
     "grid_size_km": 11.1
   },
   "fishing_hotspots": [
     {
+      "lat": 35.25,
+      "lng": 129.35,
+      "intensity": 1.0,
+      "activity_count": 2036
+    },
+    {
+      "lat": 34.95,
+      "lng": 129.05,
+      "intensity": 0.9037,
+      "activity_count": 1840
+    },
+    {
       "lat": 35.15,
-      "lng": 129.12,
-      "intensity": 0.95,
-      "activity_count": 145
+      "lng": 129.25,
+      "intensity": 0.8404,
+      "activity_count": 1711
+    },
+    {
+      "lat": 34.95,
+      "lng": 129.15,
+      "intensity": 0.8168,
+      "activity_count": 1663
+    },
+    {
+      "lat": 35.55,
+      "lng": 129.55,
+      "intensity": 0.7834,
+      "activity_count": 1595
+    },
+    {
+      "lat": 35.35,
+      "lng": 129.45,
+      "intensity": 0.7647,
+      "activity_count": 1557
+    },
+    {
+      "lat": 35.45,
+      "lng": 129.55,
+      "intensity": 0.7495,
+      "activity_count": 1526
+    },
+    {
+      "lat": 35.35,
+      "lng": 129.55,
+      "intensity": 0.6488,
+      "activity_count": 1321
+    },
+    {
+      "lat": 34.65,
+      "lng": 128.05,
+      "intensity": 0.6257,
+      "activity_count": 1274
+    },
+    {
+      "lat": 34.65,
+      "lng": 128.15,
+      "intensity": 0.613,
+      "activity_count": 1248
     },
     {
       "lat": 35.05,
+      "lng": 129.25,
+      "intensity": 0.5815,
+      "activity_count": 1184
+    },
+    {
+      "lat": 35.05,
+      "lng": 129.15,
+      "intensity": 0.527,
+      "activity_count": 1073
+    },
+    {
+      "lat": 34.65,
+      "lng": 127.95,
+      "intensity": 0.499,
+      "activity_count": 1016
+    },
+    {
+      "lat": 35.65,
+      "lng": 129.55,
+      "intensity": 0.4681,
+      "activity_count": 953
+    },
+    {
+      "lat": 34.95,
+      "lng": 128.95,
+      "intensity": 0.4514,
+      "activity_count": 919
+    },
+    {
+      "lat": 35.45,
+      "lng": 129.45,
+      "intensity": 0.4244,
+      "activity_count": 864
+    },
+    {
+      "lat": 36.85,
+      "lng": 126.05,
+      "intensity": 0.4126,
+      "activity_count": 840
+    },
+    {
+      "lat": 34.85,
       "lng": 129.05,
-      "intensity": 0.82,
-      "activity_count": 125
+      "intensity": 0.4072,
+      "activity_count": 829
+    },
+    {
+      "lat": 36.95,
+      "lng": 126.05,
+      "intensity": 0.3924,
+      "activity_count": 799
+    },
+    {
+      "lat": 34.55,
+      "lng": 128.05,
+      "intensity": 0.3802,
+      "activity_count": 774
+    },
+    {
+      "lat": 37.15,
+      "lng": 126.55,
+      "intensity": 0.3787,
+      "activity_count": 771
+    },
+    {
+      "lat": 35.55,
+      "lng": 129.95,
+      "intensity": 0.3777,
+      "activity_count": 769
+    },
+    {
+      "lat": 37.15,
+      "lng": 126.45,
+      "intensity": 0.3556,
+      "activity_count": 724
+    },
+    {
+      "lat": 37.35,
+      "lng": 126.55,
+      "intensity": 0.3541,
+      "activity_count": 721
+    },
+    {
+      "lat": 34.85,
+      "lng": 128.95,
+      "intensity": 0.3428,
+      "activity_count": 698
+    },
+    {
+      "lat": 34.75,
+      "lng": 128.15,
+      "intensity": 0.334,
+      "activity_count": 680
+    },
+    {
+      "lat": 36.95,
+      "lng": 126.25,
+      "intensity": 0.3301,
+      "activity_count": 672
+    },
+    {
+      "lat": 35.55,
+      "lng": 129.45,
+      "intensity": 0.3247,
+      "activity_count": 661
+    },
+    {
+      "lat": 34.95,
+      "lng": 129.25,
+      "intensity": 0.3237,
+      "activity_count": 659
+    },
+    {
+      "lat": 35.15,
+      "lng": 129.35,
+      "intensity": 0.3232,
+      "activity_count": 658
+    },
+    {
+      "lat": 34.85,
+      "lng": 128.85,
+      "intensity": 0.3193,
+      "activity_count": 650
+    },
+    {
+      "lat": 36.95,
+      "lng": 126.15,
+      "intensity": 0.3139,
+      "activity_count": 639
+    },
+    {
+      "lat": 36.75,
+      "lng": 126.05,
+      "intensity": 0.3134,
+      "activity_count": 638
+    },
+    {
+      "lat": 35.55,
+      "lng": 129.65,
+      "intensity": 0.3124,
+      "activity_count": 636
+    },
+    {
+      "lat": 34.55,
+      "lng": 127.75,
+      "intensity": 0.3065,
+      "activity_count": 624
+    },
+    {
+      "lat": 34.45,
+      "lng": 128.35,
+      "intensity": 0.2952,
+      "activity_count": 601
+    },
+    {
+      "lat": 34.45,
+      "lng": 127.65,
+      "intensity": 0.2947,
+      "activity_count": 600
+    },
+    {
+      "lat": 34.35,
+      "lng": 128.35,
+      "intensity": 0.2942,
+      "activity_count": 599
+    },
+    {
+      "lat": 34.65,
+      "lng": 127.85,
+      "intensity": 0.2932,
+      "activity_count": 597
+    },
+    {
+      "lat": 35.45,
+      "lng": 129.85,
+      "intensity": 0.2917,
+      "activity_count": 594
+    },
+    {
+      "lat": 34.25,
+      "lng": 128.75,
+      "intensity": 0.2883,
+      "activity_count": 587
+    },
+    {
+      "lat": 35.35,
+      "lng": 129.35,
+      "intensity": 0.2878,
+      "activity_count": 586
+    },
+    {
+      "lat": 35.55,
+      "lng": 129.85,
+      "intensity": 0.2873,
+      "activity_count": 585
     },
     {
       "lat": 35.25,
+      "lng": 129.25,
+      "intensity": 0.2849,
+      "activity_count": 580
+    },
+    {
+      "lat": 34.75,
+      "lng": 128.25,
+      "intensity": 0.2834,
+      "activity_count": 577
+    },
+    {
+      "lat": 35.15,
       "lng": 129.15,
-      "intensity": 0.78,
-      "activity_count": 119
+      "intensity": 0.2834,
+      "activity_count": 577
     },
     {
-      "lat": 35.18,
-      "lng": 128.95,
-      "intensity": 0.65,
-      "activity_count": 99
+      "lat": 34.45,
+      "lng": 128.55,
+      "intensity": 0.2819,
+      "activity_count": 574
     },
     {
-      "lat": 35.08,
-      "lng": 129.18,
-      "intensity": 0.58,
-      "activity_count": 88
+      "lat": 37.05,
+      "lng": 126.25,
+      "intensity": 0.2814,
+      "activity_count": 573
     },
     {
-      "lat": 35.22,
-      "lng": 129.08,
-      "intensity": 0.52,
-      "activity_count": 79
+      "lat": 35.75,
+      "lng": 129.55,
+      "intensity": 0.2755,
+      "activity_count": 561
     },
     {
-      "lat": 35.12,
-      "lng": 128.88,
-      "intensity": 0.45,
-      "activity_count": 68
-    },
-    {
-      "lat": 34.98,
-      "lng": 129.12,
-      "intensity": 0.38,
-      "activity_count": 58
-    },
-    {
-      "lat": 35.28,
-      "lng": 129.02,
-      "intensity": 0.32,
-      "activity_count": 49
-    },
-    {
-      "lat": 35.02,
-      "lng": 128.92,
-      "intensity": 0.28,
-      "activity_count": 42
+      "lat": 34.55,
+      "lng": 128.15,
+      "intensity": 0.2706,
+      "activity_count": 551
     }
   ],
   "debris_hotspots": [
     {
-      "lat": 35.16,
-      "lng": 129.13,
-      "intensity": 0.88,
-      "debris_count": 235
+      "lat": 34.45,
+      "lng": 127.85,
+      "intensity": 1.0,
+      "debris_count": 2455
     },
     {
-      "lat": 35.06,
-      "lng": 129.06,
-      "intensity": 0.75,
-      "debris_count": 201
+      "lat": 34.65,
+      "lng": 128.25,
+      "intensity": 0.567,
+      "debris_count": 1392
     },
     {
-      "lat": 35.24,
-      "lng": 129.16,
-      "intensity": 0.68,
+      "lat": 34.05,
+      "lng": 127.25,
+      "intensity": 0.4053,
+      "debris_count": 995
+    },
+    {
+      "lat": 34.15,
+      "lng": 126.55,
+      "intensity": 0.3438,
+      "debris_count": 844
+    },
+    {
+      "lat": 34.65,
+      "lng": 125.85,
+      "intensity": 0.2778,
+      "debris_count": 682
+    },
+    {
+      "lat": 34.95,
+      "lng": 128.65,
+      "intensity": 0.2407,
+      "debris_count": 591
+    },
+    {
+      "lat": 34.65,
+      "lng": 125.45,
+      "intensity": 0.1992,
+      "debris_count": 489
+    },
+    {
+      "lat": 36.05,
+      "lng": 129.55,
+      "intensity": 0.1642,
+      "debris_count": 403
+    },
+    {
+      "lat": 34.85,
+      "lng": 128.45,
+      "intensity": 0.1189,
+      "debris_count": 292
+    },
+    {
+      "lat": 35.25,
+      "lng": 129.25,
+      "intensity": 0.1128,
+      "debris_count": 277
+    },
+    {
+      "lat": 34.95,
+      "lng": 128.25,
+      "intensity": 0.1108,
+      "debris_count": 272
+    },
+    {
+      "lat": 34.45,
+      "lng": 126.05,
+      "intensity": 0.1047,
+      "debris_count": 257
+    },
+    {
+      "lat": 36.15,
+      "lng": 129.35,
+      "intensity": 0.0916,
+      "debris_count": 225
+    },
+    {
+      "lat": 33.55,
+      "lng": 126.75,
+      "intensity": 0.0802,
+      "debris_count": 197
+    },
+    {
+      "lat": 37.55,
+      "lng": 129.05,
+      "intensity": 0.0741,
       "debris_count": 182
     },
     {
-      "lat": 35.19,
-      "lng": 128.96,
-      "intensity": 0.59,
-      "debris_count": 158
+      "lat": 34.35,
+      "lng": 126.75,
+      "intensity": 0.0566,
+      "debris_count": 139
     },
     {
-      "lat": 35.09,
-      "lng": 129.19,
-      "intensity": 0.51,
-      "debris_count": 136
+      "lat": 34.45,
+      "lng": 126.45,
+      "intensity": 0.055,
+      "debris_count": 135
     },
     {
-      "lat": 35.23,
-      "lng": 129.09,
-      "intensity": 0.46,
-      "debris_count": 123
+      "lat": 36.45,
+      "lng": 126.35,
+      "intensity": 0.0542,
+      "debris_count": 133
     },
     {
-      "lat": 35.13,
-      "lng": 128.89,
-      "intensity": 0.39,
-      "debris_count": 104
+      "lat": 34.35,
+      "lng": 126.85,
+      "intensity": 0.053,
+      "debris_count": 130
     },
     {
-      "lat": 34.99,
-      "lng": 129.13,
-      "intensity": 0.33,
-      "debris_count": 88
+      "lat": 35.05,
+      "lng": 128.85,
+      "intensity": 0.0513,
+      "debris_count": 126
     },
     {
-      "lat": 35.29,
-      "lng": 129.03,
-      "intensity": 0.27,
-      "debris_count": 72
+      "lat": 34.85,
+      "lng": 125.95,
+      "intensity": 0.0493,
+      "debris_count": 121
     },
     {
-      "lat": 35.03,
-      "lng": 128.93,
-      "intensity": 0.22,
+      "lat": 37.55,
+      "lng": 130.85,
+      "intensity": 0.0448,
+      "debris_count": 110
+    },
+    {
+      "lat": 36.35,
+      "lng": 126.35,
+      "intensity": 0.0411,
+      "debris_count": 101
+    },
+    {
+      "lat": 37.95,
+      "lng": 124.75,
+      "intensity": 0.0387,
+      "debris_count": 95
+    },
+    {
+      "lat": 35.55,
+      "lng": 126.45,
+      "intensity": 0.0379,
+      "debris_count": 93
+    },
+    {
+      "lat": 36.85,
+      "lng": 126.15,
+      "intensity": 0.0371,
+      "debris_count": 91
+    },
+    {
+      "lat": 34.75,
+      "lng": 127.85,
+      "intensity": 0.033,
+      "debris_count": 81
+    },
+    {
+      "lat": 36.55,
+      "lng": 129.45,
+      "intensity": 0.033,
+      "debris_count": 81
+    },
+    {
+      "lat": 35.35,
+      "lng": 129.35,
+      "intensity": 0.0318,
+      "debris_count": 78
+    },
+    {
+      "lat": 34.55,
+      "lng": 127.15,
+      "intensity": 0.0297,
+      "debris_count": 73
+    },
+    {
+      "lat": 33.25,
+      "lng": 126.25,
+      "intensity": 0.0277,
+      "debris_count": 68
+    },
+    {
+      "lat": 34.65,
+      "lng": 127.65,
+      "intensity": 0.0261,
+      "debris_count": 64
+    },
+    {
+      "lat": 35.45,
+      "lng": 129.45,
+      "intensity": 0.0261,
+      "debris_count": 64
+    },
+    {
+      "lat": 34.95,
+      "lng": 128.05,
+      "intensity": 0.024,
       "debris_count": 59
+    },
+    {
+      "lat": 34.65,
+      "lng": 126.25,
+      "intensity": 0.0196,
+      "debris_count": 48
+    },
+    {
+      "lat": 34.85,
+      "lng": 127.55,
+      "intensity": 0.0179,
+      "debris_count": 44
+    },
+    {
+      "lat": 34.85,
+      "lng": 126.25,
+      "intensity": 0.0175,
+      "debris_count": 43
+    },
+    {
+      "lat": 35.25,
+      "lng": 126.35,
+      "intensity": 0.0175,
+      "debris_count": 43
+    },
+    {
+      "lat": 35.15,
+      "lng": 126.15,
+      "intensity": 0.0171,
+      "debris_count": 42
+    },
+    {
+      "lat": 34.45,
+      "lng": 127.45,
+      "intensity": 0.013,
+      "debris_count": 32
+    },
+    {
+      "lat": 38.25,
+      "lng": 128.55,
+      "intensity": 0.0118,
+      "debris_count": 29
+    },
+    {
+      "lat": 37.75,
+      "lng": 128.95,
+      "intensity": 0.0106,
+      "debris_count": 26
+    },
+    {
+      "lat": 35.85,
+      "lng": 126.45,
+      "intensity": 0.0098,
+      "debris_count": 24
+    },
+    {
+      "lat": 37.35,
+      "lng": 126.65,
+      "intensity": 0.0094,
+      "debris_count": 23
+    },
+    {
+      "lat": 37.65,
+      "lng": 126.35,
+      "intensity": 0.0094,
+      "debris_count": 23
+    },
+    {
+      "lat": 35.65,
+      "lng": 126.55,
+      "intensity": 0.0073,
+      "debris_count": 18
+    },
+    {
+      "lat": 35.55,
+      "lng": 129.45,
+      "intensity": 0.0065,
+      "debris_count": 16
+    },
+    {
+      "lat": 36.15,
+      "lng": 126.65,
+      "intensity": 0.0065,
+      "debris_count": 16
+    },
+    {
+      "lat": 37.05,
+      "lng": 129.45,
+      "intensity": 0.0061,
+      "debris_count": 15
+    },
+    {
+      "lat": 35.05,
+      "lng": 129.05,
+      "intensity": 0.0041,
+      "debris_count": 10
     }
   ],
   "coverage": {
-    "lat_min": 34.8,
-    "lat_max": 35.4,
-    "lng_min": 128.7,
-    "lng_max": 129.3
+    "lat_min": 32.0015,
+    "lat_max": 38.3693,
+    "lng_min": 124.0008,
+    "lng_max": 131.799
   },
   "top_debris_items": {
-    "폐그물": 1250,
-    "플라스틱": 980,
-    "로프": 650,
-    "어구": 420,
-    "스티로폼": 380
+    "밧줄(꼬인 것, 어업용)": 11131,
+    "그물": 470,
+    "통발, 장어통발용 미끼통": 285
   }
 }
