@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { getDonationsByRegion } from '@/utils/localStorage';
@@ -10,6 +11,24 @@ const HotspotDetailModal = () => {
   const setSelectedHotspot = useStore((state) => state.setSelectedHotspot);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
   const user = useStore((state) => state.user);
+  const [address, setAddress] = useState<string>('');
+
+  // 역지오코딩: 좌표 -> 주소
+  useEffect(() => {
+    if (!selectedHotspot || !window.kakao) return;
+
+    const geocoder = new window.kakao.maps.services.Geocoder();
+
+    geocoder.coord2Address(selectedHotspot.lng, selectedHotspot.lat, (result: any, status: any) => {
+      if (status === window.kakao.maps.services.Status.OK && result[0]) {
+        const addr = result[0].address;
+        const fullAddr = addr.address_name || '';
+        setAddress(fullAddr);
+      } else {
+        setAddress('주소를 찾을 수 없습니다');
+      }
+    });
+  }, [selectedHotspot]);
 
   if (!selectedHotspot) return null;
 
@@ -18,6 +37,16 @@ const HotspotDetailModal = () => {
   const totalDonated = donations.reduce((sum, d) => sum + d.amount, 0);
   const targetAmount = 10000000; // 목표: 1000만원
   const progressPercent = Math.min(100, (totalDonated / targetAmount) * 100);
+
+  // 밀집도 및 기부 참여율 기반 영역 보너스 계산
+  const intensity = selectedHotspot.intensity;
+  const donationParticipation = donations.length;
+  const bonusMultiplier = intensity > 0.7 && donationParticipation < 3
+    ? 1.5 // 고밀집도 + 저참여 = 50% 보너스
+    : intensity > 0.5
+    ? 1.3 // 중밀집도 = 30% 보너스
+    : 1.0; // 기본
+  const isHighPriority = intensity > 0.7 && donationParticipation < 3;
 
   const handleDonate = () => {
     if (!user) {
@@ -55,25 +84,59 @@ const HotspotDetailModal = () => {
 
             {/* 위치 정보 */}
             <div className="card mb-4 bg-slate-50">
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-slate-600">위도:</span>
-                  <span className="font-medium">{selectedHotspot.lat.toFixed(4)}°</span>
+              <div className="space-y-3">
+                {/* 주소 */}
+                <div>
+                  <span className="text-slate-600 text-xs block mb-1">위치</span>
+                  <p className="font-bold text-slate-800 text-base">{address || '주소 로딩 중...'}</p>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {selectedHotspot.lat.toFixed(4)}°N, {selectedHotspot.lng.toFixed(4)}°E
+                  </p>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">경도:</span>
-                  <span className="font-medium">{selectedHotspot.lng.toFixed(4)}°</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">밀집도:</span>
-                  <span className="font-medium">{(selectedHotspot.intensity * 100).toFixed(1)}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">활동 건수:</span>
-                  <span className="font-medium">{formatNumber(selectedHotspot.activityCount)}건</span>
+
+                {/* 밀집도 및 활동 */}
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
+                  <div>
+                    <span className="text-slate-600 text-xs block mb-1">밀집도</span>
+                    <span className="font-bold text-ocean-primary text-base">
+                      {(selectedHotspot.intensity * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-600 text-xs block mb-1">활동 건수</span>
+                    <span className="font-bold text-slate-800 text-base">
+                      {formatNumber(selectedHotspot.activityCount)}건
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* 영역 보너스 정보 */}
+            {bonusMultiplier > 1.0 && (
+              <div className={`card mb-4 ${isHighPriority ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-400' : 'bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300'}`}>
+                <div className="flex items-start gap-3">
+                  <div className="text-3xl">
+                    {isHighPriority ? '⭐' : '💎'}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`font-bold mb-1 ${isHighPriority ? 'text-amber-800' : 'text-blue-800'}`}>
+                      {isHighPriority ? '🔥 우선 정화 추천 구역' : '영역 보너스 적용'}
+                    </h3>
+                    <p className="text-sm text-slate-700 mb-2">
+                      {isHighPriority
+                        ? '밀집도가 높지만 기부 참여가 적은 지역입니다!'
+                        : '밀집도가 높은 지역입니다.'}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-bold px-3 py-1 rounded-full ${isHighPriority ? 'bg-amber-400 text-amber-900' : 'bg-blue-400 text-blue-900'}`}>
+                        동일 금액 {((bonusMultiplier - 1) * 100).toFixed(0)}% 더 넓은 영역
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* 정화 진행률 */}
             <div className="mb-4">

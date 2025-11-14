@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "generated_at": "2025-11-14T21:57:00.000Z",
+    "fishing_records": 1250,
+    "debris_records": 890,
+    "grid_size_degrees": 0.1,
+    "grid_size_km": 11.1
+  },
+  "fishing_hotspots": [
+    {
+      "lat": 35.15,
+      "lng": 129.12,
+      "intensity": 0.95,
+      "activity_count": 145
+    },
+    {
+      "lat": 35.05,
+      "lng": 129.05,
+      "intensity": 0.82,
+      "activity_count": 125
+    },
+    {
+      "lat": 35.25,
+      "lng": 129.15,
+      "intensity": 0.78,
+      "activity_count": 119
+    },
+    {
+      "lat": 35.18,
+      "lng": 128.95,
+      "intensity": 0.65,
+      "activity_count": 99
+    },
+    {
+      "lat": 35.08,
+      "lng": 129.18,
+      "intensity": 0.58,
+      "activity_count": 88
+    },
+    {
+      "lat": 35.22,
+      "lng": 129.08,
+      "intensity": 0.52,
+      "activity_count": 79
+    },
+    {
+      "lat": 35.12,
+      "lng": 128.88,
+      "intensity": 0.45,
+      "activity_count": 68
+    },
+    {
+      "lat": 34.98,
+      "lng": 129.12,
+      "intensity": 0.38,
+      "activity_count": 58
+    },
+    {
+      "lat": 35.28,
+      "lng": 129.02,
+      "intensity": 0.32,
+      "activity_count": 49
+    },
+    {
+      "lat": 35.02,
+      "lng": 128.92,
+      "intensity": 0.28,
+      "activity_count": 42
+    }
+  ],
+  "debris_hotspots": [
+    {
+      "lat": 35.16,
+      "lng": 129.13,
+      "intensity": 0.88,
+      "debris_count": 235
+    },
+    {
+      "lat": 35.06,
+      "lng": 129.06,
+      "intensity": 0.75,
+      "debris_count": 201
+    },
+    {
+      "lat": 35.24,
+      "lng": 129.16,
+      "intensity": 0.68,
+      "debris_count": 182
+    },
+    {
+      "lat": 35.19,
+      "lng": 128.96,
+      "intensity": 0.59,
+      "debris_count": 158
+    },
+    {
+      "lat": 35.09,
+      "lng": 129.19,
+      "intensity": 0.51,
+      "debris_count": 136
+    },
+    {
+      "lat": 35.23,
+      "lng": 129.09,
+      "intensity": 0.46,
+      "debris_count": 123
+    },
+    {
+      "lat": 35.13,
+      "lng": 128.89,
+      "intensity": 0.39,
+      "debris_count": 104
+    },
+    {
+      "lat": 34.99,
+      "lng": 129.13,
+      "intensity": 0.33,
+      "debris_count": 88
+    },
+    {
+      "lat": 35.29,
+      "lng": 129.03,
+      "intensity": 0.27,
+      "debris_count": 72
+    },
+    {
+      "lat": 35.03,
+      "lng": 128.93,
+      "intensity": 0.22,
+      "debris_count": 59
+    }
+  ],
+  "coverage": {
+    "lat_min": 34.8,
+    "lat_max": 35.4,
+    "lng_min": 128.7,
+    "lng_max": 129.3
+  },
+  "top_debris_items": {
+    "폐그물": 1250,
+    "플라스틱": 980,
+    "로프": 650,
+    "어구": 420,
+    "스티로폼": 380
+  }
+}

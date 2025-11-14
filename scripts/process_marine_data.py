@@ -59,7 +59,7 @@ def load_debris_data():
     return df
 
 
-def create_grid_hotspots(df, lat_col, lng_col, value_col='count'):
+def create_grid_hotspots(df, lat_col, lng_col, value_col='count', count_field='activity_count'):
     """격자 기반 핫스팟 생성"""
     print(f"격자 크기 {GRID_SIZE}도로 핫스팟 계산 중...")
 
@@ -82,7 +82,7 @@ def create_grid_hotspots(df, lat_col, lng_col, value_col='count'):
             'lat': round(float(lat), 4),
             'lng': round(float(lng), 4),
             'intensity': round(float(count / max_count), 4),
-            'activity_count': int(count)
+            count_field: int(count)
         })
 
     # 강도 순으로 정렬
@@ -102,12 +102,12 @@ def generate_map_data():
 
     # 핫스팟 생성
     print("\n조업 활동 핫스팟 생성...")
-    fishing_hotspots = create_grid_hotspots(fishing_df, 'LA', 'LO')
+    fishing_hotspots = create_grid_hotspots(fishing_df, 'LA', 'LO', count_field='activity_count')
 
     print("\n해양 쓰레기 핫스팟 생성...")
     # 쓰레기는 개수(IEM_CNT) 고려
     debris_df_filtered = debris_df[debris_df['IEM_CNT'] > 0].copy()
-    debris_hotspots = create_grid_hotspots(debris_df_filtered, 'STR_LA', 'STR_LO', 'IEM_CNT')
+    debris_hotspots = create_grid_hotspots(debris_df_filtered, 'STR_LA', 'STR_LO', 'IEM_CNT', count_field='debris_count')
 
     # 상위 핫스팟만 선택 (성능 최적화)
     fishing_hotspots = fishing_hotspots[:50]

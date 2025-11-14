@@ -103,17 +103,31 @@ export const useStore = create<AppState>((set, get) => ({
     set({ selectedHotspot: hotspot });
   },
 
-  // 모달 제어
+  // 모달 제어 (하나만 열리도록)
   setShowDonateModal: (show: boolean) => {
-    set({ showDonateModal: show });
+    set({
+      showDonateModal: show,
+      showMyOceanModal: false,
+      showRankingModal: false,
+    });
   },
 
   setShowMyOceanModal: (show: boolean) => {
-    set({ showMyOceanModal: show });
+    set({
+      showMyOceanModal: show,
+      showDonateModal: false,
+      showRankingModal: false,
+      // 나의 바다 열 때 알림 모두 제거
+      realtimeNotifications: show ? [] : get().realtimeNotifications,
+    });
   },
 
   setShowRankingModal: (show: boolean) => {
-    set({ showRankingModal: show });
+    set({
+      showRankingModal: show,
+      showDonateModal: false,
+      showMyOceanModal: false,
+    });
   },
 
   // 모바일 메뉴 제어
@@ -136,11 +150,7 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       realtimeNotifications: [...state.realtimeNotifications, { ...notification, id }],
     }));
-
-    // 3초 후 자동 제거
-    setTimeout(() => {
-      get().removeNotification(id);
-    }, 3000);
+    // 자동 제거 안 함 - 나의 바다 열 때까지 유지
   },
 
   removeNotification: (id: string) => {

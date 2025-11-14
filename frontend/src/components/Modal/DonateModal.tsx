@@ -150,23 +150,29 @@ const DonateModal = () => {
                 <div className="space-y-3 mb-6">
                   {DONATION_AMOUNTS.map((amount, idx) => {
                     const colors = [
-                      { bg: 'from-blue-400 to-blue-500', icon: '🌊' },
-                      { bg: 'from-purple-400 to-purple-500', icon: '💙' },
-                      { bg: 'from-pink-400 to-pink-500', icon: '💎' },
+                      { bg: 'from-sky-400 to-blue-500', icon: '🌊' },
+                      { bg: 'from-cyan-400 to-teal-500', icon: '💙' },
+                      { bg: 'from-blue-500 to-indigo-600', icon: '💎' },
                     ];
                     const color = colors[idx];
                     const isSelected = selectedAmount === amount;
+                    const isPopular = idx === 1; // 100만원
 
                     return (
                       <button
                         key={amount}
                         onClick={() => setSelectedAmount(amount)}
-                        className={`w-full p-4 rounded-2xl border-2 transition-all active:scale-98 ${
+                        className={`relative w-full p-4 rounded-2xl border-2 transition-all active:scale-98 ${
                           isSelected
                             ? 'border-ocean-primary bg-ocean-primary bg-opacity-10 shadow-lg scale-102'
                             : 'border-slate-200 hover:border-ocean-primary'
                         }`}
                       >
+                        {isPopular && (
+                          <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                            🔥 인기
+                          </div>
+                        )}
                         <div className="flex items-center gap-4">
                           <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${color.bg} flex items-center justify-center text-2xl flex-shrink-0`}>
                             {color.icon}

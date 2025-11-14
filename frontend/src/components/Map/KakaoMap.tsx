@@ -69,15 +69,23 @@ const KakaoMap = () => {
       if (hotspot.type === 'fishing' && !showFishingLayer) return;
       if (hotspot.type === 'debris' && !showDebrisLayer) return;
 
+      // 이 핫스팟에 대한 기부 참여 확인
+      const regionName = `${hotspot.lat.toFixed(2)}°N ${hotspot.lng.toFixed(2)}°E`;
+      const regionDonations = donations.filter(d => d.regionName === regionName);
+      const donationParticipation = regionDonations.length;
+
+      // 우선 정화 추천 구역 확인 (고밀집도 + 저참여)
+      const isHighPriority = hotspot.intensity > 0.7 && donationParticipation < 3;
+
       const circle = new window.kakao.maps.Circle({
         center: new window.kakao.maps.LatLng(hotspot.lat, hotspot.lng),
         radius: getHotspotRadius(hotspot.intensity),
-        strokeWeight: 2,
-        strokeColor: getHotspotColor(hotspot.intensity, hotspot.type),
-        strokeOpacity: 0.8,
-        strokeStyle: 'solid',
+        strokeWeight: isHighPriority ? 5 : 2,
+        strokeColor: isHighPriority ? '#FFA500' : getHotspotColor(hotspot.intensity, hotspot.type),
+        strokeOpacity: isHighPriority ? 1 : 0.8,
+        strokeStyle: isHighPriority ? 'solid' : 'solid',
         fillColor: getHotspotColor(hotspot.intensity, hotspot.type),
-        fillOpacity: 0.3,
+        fillOpacity: isHighPriority ? 0.5 : 0.3,
       });
 
       circle.setMap(map);
@@ -93,7 +101,7 @@ const KakaoMap = () => {
       circlesRef.current.forEach((circle) => circle.setMap(null));
       circlesRef.current = [];
     };
-  }, [isLoaded, map, hotspots, isLoading, showFishingLayer, showDebrisLayer, setSelectedHotspot]);
+  }, [isLoaded, map, hotspots, isLoading, showFishingLayer, showDebrisLayer, setSelectedHotspot, donations]);
 
   // 기부 영역 및 오버레이 렌더링
   useEffect(() => {
