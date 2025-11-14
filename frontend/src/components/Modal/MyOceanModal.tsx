@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { getUserDonations } from '@/utils/localStorage';
@@ -10,12 +11,49 @@ const MyOceanModal = () => {
   const showMyOceanModal = useStore((state) => state.showMyOceanModal);
   const setShowMyOceanModal = useStore((state) => state.setShowMyOceanModal);
   const user = useStore((state) => state.user);
+  const [addressCache, setAddressCache] = useState<Record<string, string>>({});
 
   if (!showMyOceanModal || !user) return null;
 
   const myDonations = getUserDonations(user.name);
   const totalAmount = myDonations.reduce((sum, d) => sum + d.amount, 0);
   const completedCount = myDonations.filter(d => simulateCleanupProgress(d.date) >= 100).length;
+
+  // 기부 위치들의 주소를 역지오코딩
+  useEffect(() => {
+    if (!showMyOceanModal || myDonations.length === 0) return;
+
+    const fetchAddresses = async () => {
+      // Kakao Maps API가 로드될 때까지 대기
+      if (!window.kakao?.maps?.services) {
+        setTimeout(fetchAddresses, 100);
+        return;
+      }
+
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      const newCache: Record<string, string> = { ...addressCache };
+
+      myDonations.forEach((donation) => {
+        const cacheKey = `${donation.location.lat},${donation.location.lng}`;
+
+        // 이미 캐시에 있으면 스킵
+        if (newCache[cacheKey]) return;
+
+        // 역지오코딩 수행
+        geocoder.coord2Address(donation.location.lng, donation.location.lat, (result: any, status: any) => {
+          if (status === window.kakao.maps.services.Status.OK && result && result.length > 0) {
+            const addr = result[0].address;
+            const fullAddr = addr.address_name || donation.regionName || '주소 정보 없음';
+            setAddressCache(prev => ({ ...prev, [cacheKey]: fullAddr }));
+          } else {
+            setAddressCache(prev => ({ ...prev, [cacheKey]: donation.regionName || '주소 정보 없음' }));
+          }
+        });
+      });
+    };
+
+    fetchAddresses();
+  }, [showMyOceanModal, myDonations.length]);
 
   return (
     <AnimatePresence>
@@ -71,16 +109,25 @@ const MyOceanModal = () => {
                 <div className="space-y-3">
                   {myDonations.map((donation) => {
                     const progress = simulateCleanupProgress(donation.date);
+                    const cacheKey = `${donation.location.lat},${donation.location.lng}`;
+                    const address = addressCache[cacheKey] || '주소 로딩 중...';
+                    const showCoords = address === '주소 로딩 중...' || address === '주소 정보 없음';
+
                     return (
                       <div key={donation.id} className="card hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <div className="font-bold text-slate-800">{donation.regionName}</div>
+                          <div className="flex-1 mr-3">
+                            <div className="font-bold text-slate-800">{address}</div>
+                            {!showCoords && (
+                              <div className="text-xs text-slate-400 mt-0.5">
+                                {donation.location.lat.toFixed(4)}°N, {donation.location.lng.toFixed(4)}°E
+                              </div>
+                            )}
                             <div className="text-xs text-slate-500 mt-1">
                               {format(new Date(donation.date), 'yyyy년 M월 d일')}
                             </div>
                           </div>
-                          <div className="text-right">
+                          <div className="text-right flex-shrink-0">
                             <div className="font-bold text-ocean-primary">{formatAmount(donation.amount)}</div>
                             <div className="text-xs text-slate-500">{donation.area}km²</div>
                           </div>
