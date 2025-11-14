@@ -7,6 +7,9 @@ import HotspotDetailModal from '../components/Modal/HotspotDetailModal';
 import DonateModal from '../components/Modal/DonateModal';
 import MyOceanModal from '../components/Modal/MyOceanModal';
 import RankingModal from '../components/Modal/RankingModal';
+import CollectionModal from '../components/Modal/CollectionModal';
+import SonarTrackingModal from '../components/Modal/SonarTrackingModal';
+import DetectionSuccessModal from '../components/Modal/DetectionSuccessModal';
 import RealtimeDonation from '../components/Notification/RealtimeDonation';
 import { useStore } from '../store/useStore';
 
@@ -15,10 +18,28 @@ export default function Home() {
   const setIsMobileMenuOpen = useStore((state) => state.setIsMobileMenuOpen);
   const realtimeNotifications = useStore((state) => state.realtimeNotifications);
 
+  // 수거 모달 상태
+  const showCollectionModal = useStore((state) => state.showCollectionModal);
+  const showSonarTrackingModal = useStore((state) => state.showSonarTrackingModal);
+  const showDetectionSuccessModal = useStore((state) => state.showDetectionSuccessModal);
+  const setShowCollectionModal = useStore((state) => state.setShowCollectionModal);
+  const setShowSonarTrackingModal = useStore((state) => state.setShowSonarTrackingModal);
+  const setShowDetectionSuccessModal = useStore((state) => state.setShowDetectionSuccessModal);
+
   useEffect(() => {
     // 앱 시작 시 로컬스토리지에서 기부 데이터 로드
     loadDonations();
   }, [loadDonations]);
+
+  // 수거 플로우 핸들러
+  const handleStartCollection = () => {
+    setShowSonarTrackingModal(true);
+  };
+
+  const handleSonarComplete = () => {
+    setShowSonarTrackingModal(false);
+    setShowDetectionSuccessModal(true);
+  };
 
   return (
     <div className="w-full h-screen bg-slate-900 flex items-center justify-center overflow-hidden">
@@ -85,6 +106,21 @@ export default function Home() {
         <DonateModal />
         <MyOceanModal />
         <RankingModal />
+
+        {/* 수거 모달들 */}
+        <CollectionModal
+          isOpen={showCollectionModal}
+          onClose={() => setShowCollectionModal(false)}
+          onStartCollection={handleStartCollection}
+        />
+        <SonarTrackingModal
+          isOpen={showSonarTrackingModal}
+          onComplete={handleSonarComplete}
+        />
+        <DetectionSuccessModal
+          isOpen={showDetectionSuccessModal}
+          onClose={() => setShowDetectionSuccessModal(false)}
+        />
 
         {/* 실시간 알림 */}
         <RealtimeDonation />

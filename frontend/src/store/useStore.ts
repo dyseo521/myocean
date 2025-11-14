@@ -28,9 +28,15 @@ interface AppState {
   showDonateModal: boolean;
   showMyOceanModal: boolean;
   showRankingModal: boolean;
+  showCollectionModal: boolean;
+  showSonarTrackingModal: boolean;
+  showDetectionSuccessModal: boolean;
   setShowDonateModal: (show: boolean) => void;
   setShowMyOceanModal: (show: boolean) => void;
   setShowRankingModal: (show: boolean) => void;
+  setShowCollectionModal: (show: boolean) => void;
+  setShowSonarTrackingModal: (show: boolean) => void;
+  setShowDetectionSuccessModal: (show: boolean) => void;
 
   // 모바일 메뉴
   isMobileMenuOpen: boolean;
@@ -64,6 +70,9 @@ export const useStore = create<AppState>((set, get) => ({
   showDonateModal: false,
   showMyOceanModal: false,
   showRankingModal: false,
+  showCollectionModal: false,
+  showSonarTrackingModal: false,
+  showDetectionSuccessModal: false,
   isMobileMenuOpen: false,
   showFishingLayer: true,
   showDebrisLayer: true,
@@ -138,6 +147,18 @@ export const useStore = create<AppState>((set, get) => ({
       showDonateModal: false,
       showMyOceanModal: false,
     });
+  },
+
+  setShowCollectionModal: (show: boolean) => {
+    set({ showCollectionModal: show });
+  },
+
+  setShowSonarTrackingModal: (show: boolean) => {
+    set({ showSonarTrackingModal: show });
+  },
+
+  setShowDetectionSuccessModal: (show: boolean) => {
+    set({ showDetectionSuccessModal: show });
   },
 
   // 모바일 메뉴 제어

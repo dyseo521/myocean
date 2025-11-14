@@ -1,4 +1,4 @@
-import { DonationAmount } from '@/types';
+import { DonationAmount, Donation, Hotspot } from '@/types';
 
 // 기부 금액에 따른 영역 크기 계산 (km²)
 export const calculateDonationArea = (amount: DonationAmount): number => {
@@ -127,4 +127,38 @@ export const calculateDiamondPolygon = (
     { lat: center.lat - halfDiagonalLat, lng: center.lng },          // 남
     { lat: center.lat, lng: center.lng - halfDiagonalLng },          // 서
   ];
+};
+
+// 특정 핫스팟에 대한 총 기부금 계산
+export const calculateTotalDonationForHotspot = (
+  hotspot: Hotspot,
+  donations: Donation[]
+): number => {
+  const regionName = `${hotspot.lat.toFixed(2)}°N ${hotspot.lng.toFixed(2)}°E`;
+
+  return donations
+    .filter(d => d.regionName === regionName)
+    .reduce((sum, d) => sum + d.amount, 0);
+};
+
+// 핫스팟의 펀딩 완료 여부 확인
+export const isFundingComplete = (
+  hotspot: Hotspot,
+  donations: Donation[]
+): boolean => {
+  if (!hotspot.targetAmount) return false;
+
+  const totalDonation = calculateTotalDonationForHotspot(hotspot, donations);
+  return totalDonation >= hotspot.targetAmount;
+};
+
+// 핫스팟의 펀딩 진행률 계산 (0-100%)
+export const calculateFundingProgress = (
+  hotspot: Hotspot,
+  donations: Donation[]
+): number => {
+  if (!hotspot.targetAmount) return 0;
+
+  const totalDonation = calculateTotalDonationForHotspot(hotspot, donations);
+  return Math.min(100, Math.floor((totalDonation / hotspot.targetAmount) * 100));
 };

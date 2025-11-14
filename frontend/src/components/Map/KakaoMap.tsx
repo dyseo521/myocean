@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useKakaoMap } from '@/hooks/useKakaoMap';
 import { useHotspots } from '@/hooks/useHotspots';
 import { useStore } from '@/store/useStore';
-import { getHotspotColor, getHotspotRadius } from '@/utils/donation';
+import { getHotspotColor, getHotspotRadius, isFundingComplete } from '@/utils/donation';
 
 const KakaoMap = () => {
   const { map, isLoaded, error, retry } = useKakaoMap('map-container', {
@@ -27,6 +27,7 @@ const KakaoMap = () => {
   const setIsSelectingLocation = useStore((state) => state.setIsSelectingLocation);
   const setSelectedDonationLocation = useStore((state) => state.setSelectedDonationLocation);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
+  const setShowCollectionModal = useStore((state) => state.setShowCollectionModal);
 
   const polygonsRef = useRef<any[]>([]);
 
@@ -78,6 +79,9 @@ const KakaoMap = () => {
       if (hotspot.type === 'fishing' && !showFishingLayer) return;
       if (hotspot.type === 'debris' && !showDebrisLayer) return;
 
+      // 수거모드에서는 펀딩 완료된 지역만 표시
+      if (mode === 'collection' && !isFundingComplete(hotspot, donations)) return;
+
       // 이 핫스팟에 대한 기부 참여 확인
       const regionName = `${hotspot.lat.toFixed(2)}°N ${hotspot.lng.toFixed(2)}°E`;
       const donationParticipation = donationCountByRegion.get(regionName) || 0;
@@ -107,8 +111,12 @@ const KakaoMap = () => {
           setSelectedDonationLocation(location);
           setIsSelectingLocation(false);
           setShowDonateModal(true);
+        } else if (mode === 'collection') {
+          // 수거모드: 수거 가능 모달 열기
+          setSelectedHotspot(hotspot);
+          setShowCollectionModal(true);
         } else {
-          // 일반 모드: 핫스팟 상세 모달 열기
+          // 일반 펀딩 모드: 핫스팟 상세 모달 열기
           setSelectedHotspot(hotspot);
         }
       });
@@ -119,7 +127,7 @@ const KakaoMap = () => {
       circlesRef.current = [];
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map, hotspots, isLoading, showFishingLayer, showDebrisLayer, setSelectedHotspot, isSelectingLocation, setSelectedDonationLocation, setIsSelectingLocation, setShowDonateModal, donations.length]);
+  }, [isLoaded, map, hotspots, isLoading, mode, showFishingLayer, showDebrisLayer, setSelectedHotspot, isSelectingLocation, setSelectedDonationLocation, setIsSelectingLocation, setShowDonateModal, setShowCollectionModal, donations.length]);
 
   // 기부 영역 및 오버레이 렌더링
   useEffect(() => {
