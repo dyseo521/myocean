@@ -21,7 +21,7 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* 모바일: 사이드 드로어 */}
+      {/* 사이드 드로어 (항상 모바일 스타일) */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -31,7 +31,7 @@ const Sidebar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={closeMobileMenu}
-              className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+              className="fixed inset-0 bg-black bg-opacity-50 z-40"
             />
 
             {/* 드로어 메뉴 */}
@@ -40,7 +40,7 @@ const Sidebar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="md:hidden fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm bg-white shadow-2xl z-50 overflow-y-auto"
+              className="fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm bg-white shadow-2xl z-50 overflow-y-auto"
             >
               <div className="p-6 space-y-6">
                 {/* 헤더 */}
@@ -143,48 +143,6 @@ const Sidebar = () => {
           </>
         )}
       </AnimatePresence>
-
-      {/* 데스크톱: 우측 사이드바 */}
-      <div className="hidden md:block fixed top-[60px] right-0 h-[calc(100vh-60px)] w-80 bg-white shadow-xl z-30 overflow-y-auto custom-scrollbar">
-        <div className="p-6 space-y-4">
-          {/* 사용자 정보 */}
-          {user ? (
-            <div className="card">
-              <h3 className="text-sm font-bold text-slate-700 mb-2">환영합니다!</h3>
-              <p className="text-lg font-bold text-ocean-primary">{user.name}님</p>
-            </div>
-          ) : (
-            <div className="card bg-slate-50 text-center py-6">
-              <p className="text-sm text-slate-600 mb-3">로그인하여 바다를 지켜주세요</p>
-              <LoginButton />
-            </div>
-          )}
-
-          {/* 기부하기 버튼 */}
-          <DonateButton />
-
-          {/* 나의 바다 버튼 */}
-          {user && <MyOceanButton />}
-
-          {/* 랭킹 버튼 */}
-          <button
-            onClick={() => setShowRankingModal(true)}
-            className="w-full btn btn-outline"
-          >
-            🏆 기부 랭킹
-          </button>
-
-          {/* 프로젝트 정보 */}
-          <div className="card bg-gradient-to-br from-ocean-primary to-ocean-secondary text-white">
-            <h3 className="font-bold mb-2">마이오션이란?</h3>
-            <p className="text-sm opacity-90 leading-relaxed">
-              시민 참여형 유실어구 수거 펀딩 플랫폼입니다.
-              기부한 해역에 이름을 남기고,
-              깨끗한 바다를 함께 만들어요!
-            </p>
-          </div>
-        </div>
-      </div>
     </>
   );
 };
