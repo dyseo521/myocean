@@ -6,7 +6,7 @@ import { getHotspotColor, getHotspotRadius } from '@/utils/donation';
 import DonationOverlay from './DonationOverlay';
 
 const KakaoMap = () => {
-  const { map, isLoaded } = useKakaoMap('map-container', {
+  const { map, isLoaded, error } = useKakaoMap('map-container', {
     center: { lat: 35.1, lng: 129.0 }, // 부산 중심
     level: 11,
   });
@@ -89,6 +89,27 @@ const KakaoMap = () => {
       overlaysRef.current = [];
     };
   }, [isLoaded, map, donations]);
+
+  // 에러 처리
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-slate-100">
+        <div className="text-center max-w-md px-4">
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">지도 로드 오류</h3>
+          <p className="text-sm text-slate-600 mb-4">{error}</p>
+          <div className="bg-slate-50 rounded-lg p-4 text-left">
+            <p className="text-xs text-slate-700 mb-2 font-medium">해결 방법:</p>
+            <ol className="text-xs text-slate-600 space-y-1 list-decimal list-inside">
+              <li>.env 파일에 VITE_KAKAO_MAP_APP_KEY가 설정되어 있는지 확인</li>
+              <li>카카오 개발자 콘솔에서 플랫폼 도메인이 등록되어 있는지 확인</li>
+              <li>페이지를 새로고침해보세요</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
