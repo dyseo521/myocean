@@ -8,7 +8,7 @@ import { getHotspotColor, getHotspotRadius } from '@/utils/donation';
 
 const KakaoMap = () => {
   const { map, isLoaded, error, retry } = useKakaoMap('map-container', {
-    center: { lat: 35.2, lng: 129.1 }, // 부산 해역 중심 (남해/동해 경계)
+    center: { lat: 35.15, lng: 129.15 }, // 부산 해안선 중심 (해운대/광안리 포함)
     level: 10, // 부산 해역이 잘 보이는 줌 레벨
   });
 
@@ -20,6 +20,40 @@ const KakaoMap = () => {
   const showDebrisLayer = useStore((state) => state.showDebrisLayer);
   const setSelectedHotspot = useStore((state) => state.setSelectedHotspot);
   const donations = useStore((state) => state.donations);
+
+  // 위치 선택 모드
+  const isSelectingLocation = useStore((state) => state.isSelectingLocation);
+  const setIsSelectingLocation = useStore((state) => state.setIsSelectingLocation);
+  const setSelectedDonationLocation = useStore((state) => state.setSelectedDonationLocation);
+  const setShowDonateModal = useStore((state) => state.setShowDonateModal);
+
+  const rectanglesRef = useRef<any[]>([]);
+
+  // 지도 클릭 이벤트 (위치 선택 모드)
+  useEffect(() => {
+    if (!isLoaded || !map || !window.kakao) return;
+
+    const handleMapClick = (mouseEvent: any) => {
+      if (!isSelectingLocation) return;
+
+      const latlng = mouseEvent.latLng;
+      const location = {
+        lat: latlng.getLat(),
+        lng: latlng.getLng(),
+      };
+
+      // 위치 저장하고 모드 종료
+      setSelectedDonationLocation(location);
+      setIsSelectingLocation(false);
+      setShowDonateModal(true); // 모달 다시 열기
+    };
+
+    window.kakao.maps.event.addListener(map, 'click', handleMapClick);
+
+    return () => {
+      window.kakao.maps.event.removeListener(map, 'click', handleMapClick);
+    };
+  }, [isLoaded, map, isSelectingLocation, setSelectedDonationLocation, setIsSelectingLocation, setShowDonateModal]);
 
   // 핫스팟 원형 마커 렌더링
   useEffect(() => {
@@ -61,24 +95,48 @@ const KakaoMap = () => {
     };
   }, [isLoaded, map, hotspots, isLoading, showFishingLayer, showDebrisLayer, setSelectedHotspot]);
 
-  // 기부자 오버레이 렌더링
+  // 기부 영역 및 오버레이 렌더링
   useEffect(() => {
     if (!isLoaded || !map || !window.kakao) return;
+
+    // 기존 사각형 제거
+    rectanglesRef.current.forEach((rect) => rect.setMap(null));
+    rectanglesRef.current = [];
 
     // 기존 오버레이 제거
     overlaysRef.current.forEach((overlay) => overlay.setMap(null));
     overlaysRef.current = [];
 
-    // 기부 정보 렌더링
+    // 기부 영역 및 이름 렌더링
     donations.forEach((donation) => {
+      // 기부 영역이 있으면 Rectangle 표시
+      if (donation.bounds) {
+        const rectangle = new window.kakao.maps.Rectangle({
+          bounds: new window.kakao.maps.LatLngBounds(
+            new window.kakao.maps.LatLng(donation.bounds.southWest.lat, donation.bounds.southWest.lng),
+            new window.kakao.maps.LatLng(donation.bounds.northEast.lat, donation.bounds.northEast.lng)
+          ),
+          strokeWeight: 2,
+          strokeColor: '#0EA5E9',
+          strokeOpacity: 0.8,
+          strokeStyle: 'solid',
+          fillColor: '#0EA5E9',
+          fillOpacity: 0.2,
+        });
+
+        rectangle.setMap(map);
+        rectanglesRef.current.push(rectangle);
+      }
+
+      // 기부자 이름 오버레이
       const content = document.createElement('div');
-      content.className = 'bg-white px-2 py-1 rounded shadow-md text-xs font-medium border-2 border-ocean-primary';
+      content.className = 'bg-white px-3 py-1.5 rounded-lg shadow-lg text-sm font-bold border-2 border-ocean-primary whitespace-nowrap';
       content.innerHTML = `<span class="text-ocean-primary">${donation.name}</span>`;
 
       const overlay = new window.kakao.maps.CustomOverlay({
         position: new window.kakao.maps.LatLng(donation.location.lat, donation.location.lng),
         content: content,
-        yAnchor: 1.5,
+        yAnchor: 1,
       });
 
       overlay.setMap(map);
@@ -86,6 +144,8 @@ const KakaoMap = () => {
     });
 
     return () => {
+      rectanglesRef.current.forEach((rect) => rect.setMap(null));
+      rectanglesRef.current = [];
       overlaysRef.current.forEach((overlay) => overlay.setMap(null));
       overlaysRef.current = [];
     };
@@ -149,6 +209,19 @@ const KakaoMap = () => {
   return (
     <>
       <div id="map-container" className="w-full h-full" />
+
+      {/* 위치 선택 모드 안내 */}
+      {isSelectingLocation && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
+          <div className="bg-ocean-primary text-white px-6 py-4 rounded-2xl shadow-2xl animate-pulse">
+            <div className="text-center">
+              <div className="text-2xl mb-2">📍</div>
+              <div className="text-base font-bold">기부할 위치를 선택하세요</div>
+              <div className="text-sm opacity-90 mt-1">지도를 클릭해주세요</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 범례 (데스크톱만) */}
       <div className="hidden md:block absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3 z-20">

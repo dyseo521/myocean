@@ -19,6 +19,11 @@ export interface Donation {
     lng: number;
   };
   area: number; // km²
+  bounds?: {
+    // 기부 영역의 사각형 경계
+    southWest: { lat: number; lng: number };
+    northEast: { lat: number; lng: number };
+  };
   date: string;
   hotspotId?: string;
   cleanupProgress: number; // 0-100%

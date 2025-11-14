@@ -5,21 +5,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { v4 as uuidv4 } from 'uuid';
 import { saveDonation } from '@/utils/localStorage';
-import { calculateDonationArea, formatAmount } from '@/utils/donation';
+import { calculateDonationArea, calculateDonationBounds, formatAmount } from '@/utils/donation';
 import type { DonationAmount, Donation } from '@/types';
 
 const DONATION_AMOUNTS: DonationAmount[] = [100000, 1000000, 10000000];
 
 const DonateModal = () => {
   const [selectedAmount, setSelectedAmount] = useState<DonationAmount>(100000);
-  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [isSelectingLocation, setIsSelectingLocation] = useState(false);
 
   const showDonateModal = useStore((state) => state.showDonateModal);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
   const user = useStore((state) => state.user);
   const addDonation = useStore((state) => state.addDonation);
   const addNotification = useStore((state) => state.addNotification);
+
+  // 지도 위치 선택 상태 (전역 상태 사용)
+  const isSelectingLocation = useStore((state) => state.isSelectingLocation);
+  const selectedLocation = useStore((state) => state.selectedDonationLocation);
+  const setIsSelectingLocation = useStore((state) => state.setIsSelectingLocation);
+  const setSelectedLocation = useStore((state) => state.setSelectedDonationLocation);
 
   const handleClose = () => {
     setShowDonateModal(false);
@@ -28,25 +32,24 @@ const DonateModal = () => {
   };
 
   const handleSelectLocation = () => {
+    // 모달을 최소화하고 지도 클릭 모드 활성화
     setIsSelectingLocation(true);
-    alert('지도에서 기부할 위치를 클릭해주세요. (데모에서는 부산 해역으로 자동 설정됩니다)');
-
-    // 데모: 부산 해역 랜덤 위치
-    const randomLat = 35.0 + Math.random() * 0.3;
-    const randomLng = 128.9 + Math.random() * 0.3;
-    setSelectedLocation({ lat: randomLat, lng: randomLng });
-    setIsSelectingLocation(false);
+    setShowDonateModal(false);
   };
 
   const handleDonate = () => {
     if (!user || !selectedLocation) return;
+
+    const area = calculateDonationArea(selectedAmount);
+    const bounds = calculateDonationBounds(selectedLocation, area);
 
     const donation: Donation = {
       id: uuidv4(),
       name: user.name,
       amount: selectedAmount,
       location: selectedLocation,
-      area: calculateDonationArea(selectedAmount),
+      area,
+      bounds,
       date: new Date().toISOString(),
       cleanupProgress: 0,
       regionName: `${selectedLocation.lat.toFixed(2)}°N ${selectedLocation.lng.toFixed(2)}°E`,

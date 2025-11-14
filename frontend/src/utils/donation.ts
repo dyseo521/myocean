@@ -73,3 +73,32 @@ export const simulateCleanupProgress = (donationDate: string): number => {
   const progress = Math.min(100, (daysPassed / 100) * 100);
   return Math.floor(progress);
 };
+
+// 기부 금액과 중심 위치로부터 사각형 bounds 계산
+export const calculateDonationBounds = (
+  center: { lat: number; lng: number },
+  areaKm2: number
+): { southWest: { lat: number; lng: number }; northEast: { lat: number; lng: number } } => {
+  // 정사각형으로 가정: side = √area
+  const sideKm = Math.sqrt(areaKm2);
+
+  // 위도 1도 ≈ 111km
+  const latDegreeInKm = 111;
+  // 경도 1도 ≈ 111km * cos(위도) (부산 지역 기준 약 35도)
+  const lngDegreeInKm = 111 * Math.cos((center.lat * Math.PI) / 180);
+
+  // km를 도(degree)로 변환
+  const halfSideLat = (sideKm / 2) / latDegreeInKm;
+  const halfSideLng = (sideKm / 2) / lngDegreeInKm;
+
+  return {
+    southWest: {
+      lat: center.lat - halfSideLat,
+      lng: center.lng - halfSideLng,
+    },
+    northEast: {
+      lat: center.lat + halfSideLat,
+      lng: center.lng + halfSideLng,
+    },
+  };
+};

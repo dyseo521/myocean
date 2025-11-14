@@ -42,6 +42,12 @@ interface AppState {
   realtimeNotifications: Array<{ id: string; name: string; amount: number; region: string }>;
   addNotification: (notification: { name: string; amount: number; region: string }) => void;
   removeNotification: (id: string) => void;
+
+  // 지도 위치 선택 모드
+  isSelectingLocation: boolean;
+  selectedDonationLocation: { lat: number; lng: number } | null;
+  setIsSelectingLocation: (selecting: boolean) => void;
+  setSelectedDonationLocation: (location: { lat: number; lng: number } | null) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -57,6 +63,8 @@ export const useStore = create<AppState>((set, get) => ({
   showFishingLayer: true,
   showDebrisLayer: true,
   realtimeNotifications: [],
+  isSelectingLocation: false,
+  selectedDonationLocation: null,
 
   // 사용자 액션
   login: (name: string) => {
@@ -139,5 +147,14 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       realtimeNotifications: state.realtimeNotifications.filter((n) => n.id !== id),
     }));
+  },
+
+  // 지도 위치 선택
+  setIsSelectingLocation: (selecting: boolean) => {
+    set({ isSelectingLocation: selecting });
+  },
+
+  setSelectedDonationLocation: (location: { lat: number; lng: number } | null) => {
+    set({ selectedDonationLocation: location });
   },
 }));
