@@ -7,8 +7,8 @@ import DonationOverlay from './DonationOverlay';
 
 const KakaoMap = () => {
   const { map, isLoaded, error } = useKakaoMap('map-container', {
-    center: { lat: 35.1, lng: 129.0 }, // 부산 중심
-    level: 11,
+    center: { lat: 35.2, lng: 129.1 }, // 부산 해역 중심 (남해/동해 경계)
+    level: 10, // 부산 해역이 잘 보이는 줌 레벨
   });
 
   const { hotspots, isLoading } = useHotspots();
