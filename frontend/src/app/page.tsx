@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
-import KakaoMap from './components/Map/KakaoMap';
-import Sidebar from './components/Sidebar/Sidebar';
-import HotspotDetailModal from './components/Modal/HotspotDetailModal';
-import DonateModal from './components/Modal/DonateModal';
-import MyOceanModal from './components/Modal/MyOceanModal';
-import RankingModal from './components/Modal/RankingModal';
-import RealtimeDonation from './components/Notification/RealtimeDonation';
-import { useStore } from './store/useStore';
+'use client'
 
-function App() {
+import { useEffect } from 'react';
+import KakaoMap from '../components/Map/KakaoMap';
+import Sidebar from '../components/Sidebar/Sidebar';
+import HotspotDetailModal from '../components/Modal/HotspotDetailModal';
+import DonateModal from '../components/Modal/DonateModal';
+import MyOceanModal from '../components/Modal/MyOceanModal';
+import RankingModal from '../components/Modal/RankingModal';
+import RealtimeDonation from '../components/Notification/RealtimeDonation';
+import { useStore } from '../store/useStore';
+
+export default function Home() {
   const loadDonations = useStore((state) => state.loadDonations);
   const setIsMobileMenuOpen = useStore((state) => state.setIsMobileMenuOpen);
 
@@ -74,5 +76,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

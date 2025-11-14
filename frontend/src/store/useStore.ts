@@ -1,3 +1,5 @@
+'use client'
+
 import { create } from 'zustand';
 import { Donation, User, Hotspot } from '@/types';
 import { getDonations, getCurrentUser, setCurrentUser as saveUser, logout as clearUser } from '@/utils/localStorage';

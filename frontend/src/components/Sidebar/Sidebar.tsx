@@ -1,3 +1,5 @@
+'use client'
+
 import { useStore } from '@/store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import LoginButton from './LoginButton';

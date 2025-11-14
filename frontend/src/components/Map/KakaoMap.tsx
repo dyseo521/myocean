@@ -1,12 +1,13 @@
+'use client'
+
 import { useEffect, useRef } from 'react';
 import { useKakaoMap } from '@/hooks/useKakaoMap';
 import { useHotspots } from '@/hooks/useHotspots';
 import { useStore } from '@/store/useStore';
 import { getHotspotColor, getHotspotRadius } from '@/utils/donation';
-import DonationOverlay from './DonationOverlay';
 
 const KakaoMap = () => {
-  const { map, isLoaded, error, retry, retryCount } = useKakaoMap('map-container', {
+  const { map, isLoaded, error, retry } = useKakaoMap('map-container', {
     center: { lat: 35.2, lng: 129.1 }, // 부산 해역 중심 (남해/동해 경계)
     level: 10, // 부산 해역이 잘 보이는 줌 레벨
   });
