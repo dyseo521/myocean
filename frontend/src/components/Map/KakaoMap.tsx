@@ -100,7 +100,16 @@ const KakaoMap = () => {
 
       // 클릭 이벤트
       window.kakao.maps.event.addListener(circle, 'click', () => {
-        setSelectedHotspot(hotspot);
+        // 위치 선택 모드인 경우: 핫스팟 좌표를 기부 위치로 설정하고 기부 플로우 진행
+        if (isSelectingLocation) {
+          const location = { lat: hotspot.lat, lng: hotspot.lng };
+          setSelectedDonationLocation(location);
+          setIsSelectingLocation(false);
+          setShowDonateModal(true);
+        } else {
+          // 일반 모드: 핫스팟 상세 모달 열기
+          setSelectedHotspot(hotspot);
+        }
       });
     });
 
@@ -109,7 +118,7 @@ const KakaoMap = () => {
       circlesRef.current = [];
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map, hotspots, isLoading, showFishingLayer, showDebrisLayer, setSelectedHotspot, donations.length]);
+  }, [isLoaded, map, hotspots, isLoading, showFishingLayer, showDebrisLayer, setSelectedHotspot, isSelectingLocation, setSelectedDonationLocation, setIsSelectingLocation, setShowDonateModal, donations.length]);
 
   // 기부 영역 및 오버레이 렌더링
   useEffect(() => {
