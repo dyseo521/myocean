@@ -13,15 +13,12 @@ const MyOceanModal = () => {
   const user = useStore((state) => state.user);
   const [addressCache, setAddressCache] = useState<Record<string, string>>({});
 
-  if (!showMyOceanModal || !user) return null;
-
-  const myDonations = getUserDonations(user.name);
-  const totalAmount = myDonations.reduce((sum, d) => sum + d.amount, 0);
-  const completedCount = myDonations.filter(d => simulateCleanupProgress(d.date) >= 100).length;
-
-  // 기부 위치들의 주소를 역지오코딩
+  // 기부 위치들의 주소를 역지오코딩 (hooks는 항상 같은 순서로 호출되어야 함)
   useEffect(() => {
-    if (!showMyOceanModal || myDonations.length === 0) return;
+    if (!showMyOceanModal || !user) return;
+
+    const myDonations = getUserDonations(user.name);
+    if (myDonations.length === 0) return;
 
     const fetchAddresses = async () => {
       // Kakao Maps API가 로드될 때까지 대기
@@ -31,29 +28,35 @@ const MyOceanModal = () => {
       }
 
       const geocoder = new window.kakao.maps.services.Geocoder();
-      const newCache: Record<string, string> = { ...addressCache };
 
       myDonations.forEach((donation) => {
         const cacheKey = `${donation.location.lat},${donation.location.lng}`;
 
         // 이미 캐시에 있으면 스킵
-        if (newCache[cacheKey]) return;
+        if (addressCache[cacheKey]) return;
 
         // 역지오코딩 수행
         geocoder.coord2Address(donation.location.lng, donation.location.lat, (result: any, status: any) => {
           if (status === window.kakao.maps.services.Status.OK && result && result.length > 0) {
             const addr = result[0].address;
-            const fullAddr = addr.address_name || donation.regionName || '주소 정보 없음';
+            const fullAddr = addr.address_name || '';
             setAddressCache(prev => ({ ...prev, [cacheKey]: fullAddr }));
           } else {
-            setAddressCache(prev => ({ ...prev, [cacheKey]: donation.regionName || '주소 정보 없음' }));
+            setAddressCache(prev => ({ ...prev, [cacheKey]: 'FAILED' }));
           }
         });
       });
     };
 
     fetchAddresses();
-  }, [showMyOceanModal, myDonations.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showMyOceanModal, user?.name]);
+
+  if (!showMyOceanModal || !user) return null;
+
+  const myDonations = getUserDonations(user.name);
+  const totalAmount = myDonations.reduce((sum, d) => sum + d.amount, 0);
+  const completedCount = myDonations.filter(d => simulateCleanupProgress(d.date) >= 100).length;
 
   return (
     <AnimatePresence>
@@ -110,18 +113,40 @@ const MyOceanModal = () => {
                   {myDonations.map((donation) => {
                     const progress = simulateCleanupProgress(donation.date);
                     const cacheKey = `${donation.location.lat},${donation.location.lng}`;
-                    const address = addressCache[cacheKey] || '주소 로딩 중...';
-                    const showCoords = address === '주소 로딩 중...' || address === '주소 정보 없음';
+                    const addressResult = addressCache[cacheKey];
+                    const hasAddress = addressResult && addressResult !== 'FAILED';
+                    const isLoading = !addressResult;
 
                     return (
                       <div key={donation.id} className="card hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1 mr-3">
-                            <div className="font-bold text-slate-800">{address}</div>
-                            {!showCoords && (
-                              <div className="text-xs text-slate-400 mt-0.5">
-                                {donation.location.lat.toFixed(4)}°N, {donation.location.lng.toFixed(4)}°E
-                              </div>
+                            {/* 주소를 불러온 경우: 주소 크게, 좌표 작게 */}
+                            {hasAddress && (
+                              <>
+                                <div className="font-bold text-slate-800">{addressResult}</div>
+                                <div className="text-xs text-slate-400 mt-0.5">
+                                  {donation.location.lat.toFixed(4)}°N, {donation.location.lng.toFixed(4)}°E
+                                </div>
+                              </>
+                            )}
+                            {/* 주소를 불러오지 못한 경우: 좌표 크게, 메시지 작게 */}
+                            {!hasAddress && !isLoading && (
+                              <>
+                                <div className="font-bold text-slate-800">
+                                  {donation.location.lat.toFixed(4)}°N, {donation.location.lng.toFixed(4)}°E
+                                </div>
+                                <div className="text-xs text-slate-400 mt-0.5">주소를 불러오지 못했습니다</div>
+                              </>
+                            )}
+                            {/* 로딩 중 */}
+                            {isLoading && (
+                              <>
+                                <div className="font-bold text-slate-800">
+                                  {donation.location.lat.toFixed(4)}°N, {donation.location.lng.toFixed(4)}°E
+                                </div>
+                                <div className="text-xs text-slate-400 mt-0.5">주소 로딩 중...</div>
+                              </>
                             )}
                             <div className="text-xs text-slate-500 mt-1">
                               {format(new Date(donation.date), 'yyyy년 M월 d일')}

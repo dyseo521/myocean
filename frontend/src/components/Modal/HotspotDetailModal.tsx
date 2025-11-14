@@ -11,7 +11,7 @@ const HotspotDetailModal = () => {
   const setSelectedHotspot = useStore((state) => state.setSelectedHotspot);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
   const user = useStore((state) => state.user);
-  const [address, setAddress] = useState<string>('로딩 중...');
+  const [address, setAddress] = useState<string>('');
 
   // 역지오코딩: 좌표 -> 주소
   useEffect(() => {
@@ -35,19 +35,19 @@ const HotspotDetailModal = () => {
             const addr = result[0].address;
             const fullAddr = addr.address_name || '';
             console.log('Address found:', fullAddr);
-            setAddress(fullAddr || '주소 정보 없음');
+            setAddress(fullAddr || 'FAILED');
           } else {
             console.warn('Geocoding failed:', status);
-            setAddress('주소를 찾을 수 없습니다');
+            setAddress('FAILED');
           }
         });
       } catch (error) {
         console.error('Geocoding error:', error);
-        setAddress('주소 조회 오류');
+        setAddress('FAILED');
       }
     };
 
-    setAddress('로딩 중...');
+    setAddress('');
     tryGeocode();
   }, [selectedHotspot]);
 
@@ -109,10 +109,33 @@ const HotspotDetailModal = () => {
                 {/* 주소 */}
                 <div>
                   <span className="text-slate-600 text-xs block mb-1">위치</span>
-                  <p className="font-bold text-slate-800 text-base">{address || '주소 로딩 중...'}</p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    {selectedHotspot.lat.toFixed(4)}°N, {selectedHotspot.lng.toFixed(4)}°E
-                  </p>
+                  {/* 주소를 불러온 경우: 주소 크게, 좌표 작게 */}
+                  {address && address !== 'FAILED' && (
+                    <>
+                      <p className="font-bold text-slate-800 text-base">{address}</p>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {selectedHotspot.lat.toFixed(4)}°N, {selectedHotspot.lng.toFixed(4)}°E
+                      </p>
+                    </>
+                  )}
+                  {/* 주소를 불러오지 못한 경우: 좌표 크게, 메시지 작게 */}
+                  {address === 'FAILED' && (
+                    <>
+                      <p className="font-bold text-slate-800 text-base">
+                        {selectedHotspot.lat.toFixed(4)}°N, {selectedHotspot.lng.toFixed(4)}°E
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">주소를 불러오지 못했습니다</p>
+                    </>
+                  )}
+                  {/* 로딩 중 */}
+                  {!address && (
+                    <>
+                      <p className="font-bold text-slate-800 text-base">
+                        {selectedHotspot.lat.toFixed(4)}°N, {selectedHotspot.lng.toFixed(4)}°E
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">주소 로딩 중...</p>
+                    </>
+                  )}
                 </div>
 
                 {/* 밀집도 및 활동 */}

@@ -18,6 +18,7 @@ const DonateModal = () => {
   const [donorName, setDonorName] = useState('');
   const [donorPhone, setDonorPhone] = useState('');
   const [donorEmail, setDonorEmail] = useState('');
+  const [locationAddress, setLocationAddress] = useState<string>('');
 
   const showDonateModal = useStore((state) => state.showDonateModal);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
@@ -30,6 +31,35 @@ const DonateModal = () => {
   const selectedLocation = useStore((state) => state.selectedDonationLocation);
   const setIsSelectingLocation = useStore((state) => state.setIsSelectingLocation);
   const setSelectedLocation = useStore((state) => state.setSelectedDonationLocation);
+
+  // 선택된 위치의 주소를 역지오코딩
+  useEffect(() => {
+    if (!selectedLocation) {
+      setLocationAddress('');
+      return;
+    }
+
+    const fetchAddress = () => {
+      if (!window.kakao?.maps?.services) {
+        setTimeout(fetchAddress, 100);
+        return;
+      }
+
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.coord2Address(selectedLocation.lng, selectedLocation.lat, (result: any, status: any) => {
+        if (status === window.kakao.maps.services.Status.OK && result && result.length > 0) {
+          const addr = result[0].address;
+          const fullAddr = addr.address_name || '';
+          setLocationAddress(fullAddr || 'FAILED');
+        } else {
+          setLocationAddress('FAILED');
+        }
+      });
+    };
+
+    setLocationAddress('');
+    fetchAddress();
+  }, [selectedLocation]);
 
   // 모달이 열릴 때마다 초기화
   useEffect(() => {
@@ -198,15 +228,39 @@ const DonateModal = () => {
                   {selectedLocation ? (
                     <div className="card bg-ocean-primary bg-opacity-10 border-2 border-ocean-primary">
                       <div className="flex justify-between items-center">
-                        <div className="text-sm">
-                          <div className="font-medium text-ocean-primary">위치 선택 완료</div>
-                          <div className="text-xs text-slate-600 mt-1">
-                            {selectedLocation.lat.toFixed(4)}°N, {selectedLocation.lng.toFixed(4)}°E
-                          </div>
+                        <div className="text-sm flex-1 mr-2">
+                          <div className="font-medium text-ocean-primary mb-1">위치 선택 완료</div>
+                          {/* 주소를 불러온 경우: 주소 크게, 좌표 작게 */}
+                          {locationAddress && locationAddress !== 'FAILED' && (
+                            <>
+                              <div className="text-sm font-bold text-slate-800">{locationAddress}</div>
+                              <div className="text-xs text-slate-500 mt-0.5">
+                                {selectedLocation.lat.toFixed(4)}°N, {selectedLocation.lng.toFixed(4)}°E
+                              </div>
+                            </>
+                          )}
+                          {/* 주소를 불러오지 못한 경우: 좌표 크게, 메시지 작게 */}
+                          {locationAddress === 'FAILED' && (
+                            <>
+                              <div className="text-sm font-bold text-slate-800">
+                                {selectedLocation.lat.toFixed(4)}°N, {selectedLocation.lng.toFixed(4)}°E
+                              </div>
+                              <div className="text-xs text-slate-500 mt-0.5">주소를 불러오지 못했습니다</div>
+                            </>
+                          )}
+                          {/* 로딩 중 */}
+                          {!locationAddress && (
+                            <>
+                              <div className="text-sm font-bold text-slate-800">
+                                {selectedLocation.lat.toFixed(4)}°N, {selectedLocation.lng.toFixed(4)}°E
+                              </div>
+                              <div className="text-xs text-slate-500 mt-0.5">주소 로딩 중...</div>
+                            </>
+                          )}
                         </div>
                         <button
                           onClick={handleSelectLocation}
-                          className="btn btn-outline text-xs px-3 py-2"
+                          className="btn btn-outline text-xs px-3 py-2 flex-shrink-0"
                         >
                           변경
                         </button>
@@ -332,11 +386,37 @@ const DonateModal = () => {
                     <span className="text-slate-600">보호 영역</span>
                     <span className="font-bold">{calculateDonationArea(selectedAmount)}km²</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-start">
                     <span className="text-slate-600">위치</span>
-                    <span className="font-medium text-sm">
-                      {selectedLocation?.lat.toFixed(4)}°N, {selectedLocation?.lng.toFixed(4)}°E
-                    </span>
+                    <div className="text-right">
+                      {/* 주소를 불러온 경우: 주소 크게, 좌표 작게 */}
+                      {locationAddress && locationAddress !== 'FAILED' && (
+                        <>
+                          <div className="font-bold text-sm text-slate-800">{locationAddress}</div>
+                          <div className="text-xs text-slate-500 mt-0.5">
+                            {selectedLocation?.lat.toFixed(4)}°N, {selectedLocation?.lng.toFixed(4)}°E
+                          </div>
+                        </>
+                      )}
+                      {/* 주소를 불러오지 못한 경우: 좌표 크게, 메시지 작게 */}
+                      {locationAddress === 'FAILED' && (
+                        <>
+                          <div className="font-bold text-sm text-slate-800">
+                            {selectedLocation?.lat.toFixed(4)}°N, {selectedLocation?.lng.toFixed(4)}°E
+                          </div>
+                          <div className="text-xs text-slate-500 mt-0.5">주소를 불러오지 못했습니다</div>
+                        </>
+                      )}
+                      {/* 로딩 중 */}
+                      {!locationAddress && (
+                        <>
+                          <div className="font-bold text-sm text-slate-800">
+                            {selectedLocation?.lat.toFixed(4)}°N, {selectedLocation?.lng.toFixed(4)}°E
+                          </div>
+                          <div className="text-xs text-slate-500 mt-0.5">주소 로딩 중...</div>
+                        </>
+                      )}
+                    </div>
                   </div>
                   {donorPhone && (
                     <div className="flex justify-between">
