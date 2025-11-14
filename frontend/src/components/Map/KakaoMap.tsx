@@ -130,8 +130,18 @@ const KakaoMap = () => {
 
       // 기부자 이름 오버레이
       const content = document.createElement('div');
-      content.className = 'bg-white px-3 py-1.5 rounded-lg shadow-lg text-sm font-bold border-2 border-ocean-primary whitespace-nowrap';
-      content.innerHTML = `<span class="text-ocean-primary">${donation.name}</span>`;
+      content.className = 'text-lg font-black whitespace-nowrap';
+      content.style.cssText = `
+        color: #FFFFFF;
+        text-shadow:
+          -2px -2px 0 #000,
+          2px -2px 0 #000,
+          -2px 2px 0 #000,
+          2px 2px 0 #000,
+          0 0 8px rgba(0,0,0,0.8);
+        letter-spacing: 0.5px;
+      `;
+      content.textContent = donation.name;
 
       const overlay = new window.kakao.maps.CustomOverlay({
         position: new window.kakao.maps.LatLng(donation.location.lat, donation.location.lng),

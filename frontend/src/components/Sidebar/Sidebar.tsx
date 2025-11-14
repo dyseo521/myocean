@@ -8,6 +8,7 @@ import MyOceanButton from './MyOceanButton';
 
 const Sidebar = () => {
   const user = useStore((state) => state.user);
+  const logout = useStore((state) => state.logout);
   const setShowRankingModal = useStore((state) => state.setShowRankingModal);
   const isMobileMenuOpen = useStore((state) => state.isMobileMenuOpen);
   const setIsMobileMenuOpen = useStore((state) => state.setIsMobileMenuOpen);
@@ -18,6 +19,13 @@ const Sidebar = () => {
   const toggleDebrisLayer = useStore((state) => state.toggleDebrisLayer);
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  const handleLogout = () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      logout();
+      closeMobileMenu();
+    }
+  };
 
   return (
     <>
@@ -58,8 +66,18 @@ const Sidebar = () => {
                 {/* 사용자 정보 */}
                 {user ? (
                   <div className="card bg-gradient-to-br from-ocean-primary to-ocean-secondary text-white">
-                    <h3 className="text-sm font-semibold mb-1 opacity-90">환영합니다!</h3>
-                    <p className="text-xl font-bold">{user.name}님</p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-semibold mb-1 opacity-90">환영합니다!</h3>
+                        <p className="text-xl font-bold">{user.name}님</p>
+                      </div>
+                      <button
+                        onClick={handleLogout}
+                        className="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-1.5 rounded-lg text-sm font-medium transition-all active:scale-95"
+                      >
+                        로그아웃
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div className="card bg-slate-50 text-center py-6">
