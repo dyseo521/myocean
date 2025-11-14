@@ -1,0 +1,269 @@
+{
+  "donations": [
+    {
+      "id": "demo-1",
+      "name": "한울산",
+      "amount": 100000,
+      "location": {
+        "lat": 35.1068,
+        "lng": 128.7964
+      },
+      "area": 1,
+      "date": "2025-11-06T03:47:50.786914",
+      "cleanupProgress": 27,
+      "regionName": "35.11°N 128.80°E"
+    },
+    {
+      "id": "demo-2",
+      "name": "권여수",
+      "amount": 10000000,
+      "location": {
+        "lat": 34.8989,
+        "lng": 128.9093
+      },
+      "area": 20,
+      "date": "2025-10-27T03:47:50.786996",
+      "cleanupProgress": 57,
+      "regionName": "34.90°N 128.91°E"
+    },
+    {
+      "id": "demo-3",
+      "name": "임제주",
+      "amount": 10000000,
+      "location": {
+        "lat": 35.0876,
+        "lng": 128.7798
+      },
+      "area": 20,
+      "date": "2025-10-27T03:47:50.787025",
+      "cleanupProgress": 57,
+      "regionName": "35.09°N 128.78°E"
+    },
+    {
+      "id": "demo-4",
+      "name": "강부산",
+      "amount": 10000000,
+      "location": {
+        "lat": 35.2336,
+        "lng": 128.7986
+      },
+      "area": 20,
+      "date": "2025-11-01T03:47:50.787046",
+      "cleanupProgress": 42,
+      "regionName": "35.23°N 128.80°E"
+    },
+    {
+      "id": "demo-5",
+      "name": "서통영",
+      "amount": 1000000,
+      "location": {
+        "lat": 35.1113,
+        "lng": 128.814
+      },
+      "area": 5,
+      "date": "2025-11-02T03:47:50.787066",
+      "cleanupProgress": 39,
+      "regionName": "35.11°N 128.81°E"
+    },
+    {
+      "id": "demo-6",
+      "name": "문군산",
+      "amount": 10000000,
+      "location": {
+        "lat": 35.1311,
+        "lng": 128.8319
+      },
+      "area": 20,
+      "date": "2025-10-19T03:47:50.787083",
+      "cleanupProgress": 81,
+      "regionName": "35.13°N 128.83°E"
+    },
+    {
+      "id": "demo-7",
+      "name": "강부산",
+      "amount": 1000000,
+      "location": {
+        "lat": 35.3549,
+        "lng": 128.7092
+      },
+      "area": 5,
+      "date": "2025-10-27T03:47:50.787101",
+      "cleanupProgress": 57,
+      "regionName": "35.35°N 128.71°E"
+    },
+    {
+      "id": "demo-8",
+      "name": "서통영",
+      "amount": 100000,
+      "location": {
+        "lat": 35.1637,
+        "lng": 129.1511
+      },
+      "area": 1,
+      "date": "2025-10-30T03:47:50.787123",
+      "cleanupProgress": 48,
+      "regionName": "35.16°N 129.15°E"
+    },
+    {
+      "id": "demo-9",
+      "name": "권여수",
+      "amount": 100000,
+      "location": {
+        "lat": 35.0356,
+        "lng": 129.2151
+      },
+      "area": 1,
+      "date": "2025-10-30T03:47:50.787141",
+      "cleanupProgress": 48,
+      "regionName": "35.04°N 129.22°E"
+    },
+    {
+      "id": "demo-10",
+      "name": "최청정",
+      "amount": 100000,
+      "location": {
+        "lat": 35.2381,
+        "lng": 128.9246
+      },
+      "area": 1,
+      "date": "2025-11-06T03:47:50.787159",
+      "cleanupProgress": 27,
+      "regionName": "35.24°N 128.92°E"
+    },
+    {
+      "id": "demo-11",
+      "name": "송목포",
+      "amount": 1000000,
+      "location": {
+        "lat": 35.0585,
+        "lng": 129.0849
+      },
+      "area": 5,
+      "date": "2025-11-07T03:47:50.787177",
+      "cleanupProgress": 24,
+      "regionName": "35.06°N 129.08°E"
+    },
+    {
+      "id": "demo-12",
+      "name": "윤인천",
+      "amount": 100000,
+      "location": {
+        "lat": 35.2058,
+        "lng": 128.9312
+      },
+      "area": 1,
+      "date": "2025-10-22T03:47:50.787191",
+      "cleanupProgress": 72,
+      "regionName": "35.21°N 128.93°E"
+    },
+    {
+      "id": "demo-13",
+      "name": "남포항",
+      "amount": 100000,
+      "location": {
+        "lat": 35.2545,
+        "lng": 129.0572
+      },
+      "area": 1,
+      "date": "2025-11-12T03:47:50.787202",
+      "cleanupProgress": 9,
+      "regionName": "35.25°N 129.06°E"
+    },
+    {
+      "id": "demo-14",
+      "name": "송목포",
+      "amount": 1000000,
+      "location": {
+        "lat": 35.1265,
+        "lng": 129.0929
+      },
+      "area": 5,
+      "date": "2025-11-01T03:47:50.787216",
+      "cleanupProgress": 42,
+      "regionName": "35.13°N 129.09°E"
+    },
+    {
+      "id": "demo-15",
+      "name": "정환경",
+      "amount": 1000000,
+      "location": {
+        "lat": 35.2535,
+        "lng": 129.1094
+      },
+      "area": 5,
+      "date": "2025-10-16T03:47:50.787233",
+      "cleanupProgress": 90,
+      "regionName": "35.25°N 129.11°E"
+    },
+    {
+      "id": "demo-16",
+      "name": "임제주",
+      "amount": 100000,
+      "location": {
+        "lat": 34.9562,
+        "lng": 129.0915
+      },
+      "area": 1,
+      "date": "2025-11-14T03:47:50.787248",
+      "cleanupProgress": 3,
+      "regionName": "34.96°N 129.09°E"
+    },
+    {
+      "id": "demo-17",
+      "name": "김해양",
+      "amount": 10000000,
+      "location": {
+        "lat": 34.8243,
+        "lng": 129.2842
+      },
+      "area": 20,
+      "date": "2025-10-31T03:47:50.787263",
+      "cleanupProgress": 45,
+      "regionName": "34.82°N 129.28°E"
+    },
+    {
+      "id": "demo-18",
+      "name": "문군산",
+      "amount": 100000,
+      "location": {
+        "lat": 34.8882,
+        "lng": 129.1542
+      },
+      "area": 1,
+      "date": "2025-10-19T03:47:50.787281",
+      "cleanupProgress": 81,
+      "regionName": "34.89°N 129.15°E"
+    },
+    {
+      "id": "demo-19",
+      "name": "김해양",
+      "amount": 100000,
+      "location": {
+        "lat": 34.8254,
+        "lng": 128.8703
+      },
+      "area": 1,
+      "date": "2025-10-27T03:47:50.787296",
+      "cleanupProgress": 57,
+      "regionName": "34.83°N 128.87°E"
+    },
+    {
+      "id": "demo-20",
+      "name": "송목포",
+      "amount": 100000,
+      "location": {
+        "lat": 35.3399,
+        "lng": 128.8865
+      },
+      "area": 1,
+      "date": "2025-10-19T03:47:50.787312",
+      "cleanupProgress": 81,
+      "regionName": "35.34°N 128.89°E"
+    }
+  ],
+  "currentUser": null,
+  "instructions": {
+    "ko": "브라우저 개발자 도구(F12)의 Application > Local Storage에서 'myocean_donations' 키로 이 donations 배열을 저장하세요.",
+    "en": "In browser DevTools (F12), go to Application > Local Storage and save this donations array with key 'myocean_donations'."
+  }
+}

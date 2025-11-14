@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply m-0 p-0 font-sans antialiased;
+    @apply bg-slate-50 text-slate-900;
+  }
+
+  #root {
+    @apply w-full h-screen overflow-hidden;
+  }
+}
+
+@layer components {
+  /* 버튼 스타일 */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-ocean-primary text-white hover:bg-sky-600;
+    @apply focus:ring-ocean-primary;
+  }
+
+  .btn-secondary {
+    @apply bg-ocean-secondary text-white hover:bg-teal-600;
+    @apply focus:ring-ocean-secondary;
+  }
+
+  .btn-outline {
+    @apply border-2 border-ocean-primary text-ocean-primary;
+    @apply hover:bg-ocean-primary hover:text-white;
+  }
+
+  /* 카드 스타일 */
+  .card {
+    @apply bg-white rounded-xl shadow-md p-4;
+  }
+
+  /* 모달 배경 */
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-40;
+  }
+
+  /* 모달 컨테이너 */
+  .modal-container {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+  }
+
+  /* 스크롤바 스타일 */
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-slate-100 rounded;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded hover:bg-slate-400;
+  }
+}
+
+@layer utilities {
+  /* 텍스트 그라데이션 */
+  .text-gradient-ocean {
+    @apply bg-gradient-to-r from-ocean-primary to-ocean-secondary;
+    @apply bg-clip-text text-transparent;
+  }
+
+  /* 애니메이션 */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
