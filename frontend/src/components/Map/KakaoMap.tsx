@@ -6,7 +6,7 @@ import { getHotspotColor, getHotspotRadius } from '@/utils/donation';
 import DonationOverlay from './DonationOverlay';
 
 const KakaoMap = () => {
-  const { map, isLoaded, error } = useKakaoMap('map-container', {
+  const { map, isLoaded, error, retry, retryCount } = useKakaoMap('map-container', {
     center: { lat: 35.2, lng: 129.1 }, // 부산 해역 중심 (남해/동해 경계)
     level: 10, // 부산 해역이 잘 보이는 줌 레벨
   });
@@ -92,20 +92,43 @@ const KakaoMap = () => {
 
   // 에러 처리
   if (error) {
+    const isRetrying = error.includes('연결 중');
+
     return (
       <div className="w-full h-full flex items-center justify-center bg-slate-100">
         <div className="text-center max-w-md px-4">
-          <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h3 className="text-lg font-bold text-slate-800 mb-2">지도 로드 오류</h3>
-          <p className="text-sm text-slate-600 mb-4">{error}</p>
-          <div className="bg-slate-50 rounded-lg p-4 text-left">
-            <p className="text-xs text-slate-700 mb-2 font-medium">해결 방법:</p>
-            <ol className="text-xs text-slate-600 space-y-1 list-decimal list-inside">
-              <li>.env 파일에 VITE_KAKAO_MAP_APP_KEY가 설정되어 있는지 확인</li>
-              <li>카카오 개발자 콘솔에서 플랫폼 도메인이 등록되어 있는지 확인</li>
-              <li>페이지를 새로고침해보세요</li>
-            </ol>
+          <div className={`text-5xl mb-4 ${isRetrying ? 'text-ocean-primary' : 'text-red-500'}`}>
+            {isRetrying ? '🔄' : '⚠️'}
           </div>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">
+            {isRetrying ? '지도 로딩 중...' : '지도 로드 오류'}
+          </h3>
+          <p className="text-sm text-slate-600 mb-4">{error}</p>
+
+          {isRetrying ? (
+            <div className="flex justify-center mb-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ocean-primary"></div>
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={retry}
+                className="btn btn-primary mb-4 px-6 py-3 active:scale-95 transition-transform"
+              >
+                🔄 다시 시도
+              </button>
+
+              <div className="bg-slate-50 rounded-lg p-4 text-left">
+                <p className="text-xs text-slate-700 mb-2 font-medium">해결 방법:</p>
+                <ol className="text-xs text-slate-600 space-y-1 list-decimal list-inside">
+                  <li>.env 파일에 VITE_KAKAO_MAP_APP_KEY가 설정되어 있는지 확인</li>
+                  <li>카카오 개발자 콘솔에서 플랫폼 도메인이 등록되어 있는지 확인</li>
+                  <li>인터넷 연결을 확인해보세요</li>
+                  <li>위 버튼을 눌러 다시 시도해보세요</li>
+                </ol>
+              </div>
+            </>
+          )}
         </div>
       </div>
     );
