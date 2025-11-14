@@ -47,12 +47,12 @@ const LoginButton = () => {
           className="flex-1 px-3 py-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ocean-primary"
           autoFocus
         />
-        <button onClick={handleLogin} className="btn btn-primary text-sm px-4 py-3 active:scale-95 transition-transform">
+        <button onClick={handleLogin} className="btn btn-primary text-xs px-3 py-2 active:scale-95 transition-transform">
           확인
         </button>
         <button
           onClick={() => setShowInput(false)}
-          className="btn bg-slate-200 text-slate-700 text-sm px-4 py-3 active:scale-95 transition-transform"
+          className="btn bg-slate-200 text-slate-700 text-xs px-3 py-2 active:scale-95 transition-transform"
         >
           취소
         </button>
