@@ -11,23 +11,44 @@ const HotspotDetailModal = () => {
   const setSelectedHotspot = useStore((state) => state.setSelectedHotspot);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
   const user = useStore((state) => state.user);
-  const [address, setAddress] = useState<string>('');
+  const [address, setAddress] = useState<string>('로딩 중...');
 
   // 역지오코딩: 좌표 -> 주소
   useEffect(() => {
-    if (!selectedHotspot || !window.kakao) return;
+    if (!selectedHotspot) return;
 
-    const geocoder = new window.kakao.maps.services.Geocoder();
-
-    geocoder.coord2Address(selectedHotspot.lng, selectedHotspot.lat, (result: any, status: any) => {
-      if (status === window.kakao.maps.services.Status.OK && result[0]) {
-        const addr = result[0].address;
-        const fullAddr = addr.address_name || '';
-        setAddress(fullAddr);
-      } else {
-        setAddress('주소를 찾을 수 없습니다');
+    // Kakao Maps API가 로드될 때까지 대기
+    const tryGeocode = () => {
+      if (!window.kakao?.maps?.services) {
+        console.log('Kakao Maps services not loaded yet, retrying...');
+        setTimeout(tryGeocode, 100);
+        return;
       }
-    });
+
+      try {
+        const geocoder = new window.kakao.maps.services.Geocoder();
+
+        geocoder.coord2Address(selectedHotspot.lng, selectedHotspot.lat, (result: any, status: any) => {
+          console.log('Geocoding result:', { result, status });
+
+          if (status === window.kakao.maps.services.Status.OK && result && result.length > 0) {
+            const addr = result[0].address;
+            const fullAddr = addr.address_name || '';
+            console.log('Address found:', fullAddr);
+            setAddress(fullAddr || '주소 정보 없음');
+          } else {
+            console.warn('Geocoding failed:', status);
+            setAddress('주소를 찾을 수 없습니다');
+          }
+        });
+      } catch (error) {
+        console.error('Geocoding error:', error);
+        setAddress('주소 조회 오류');
+      }
+    };
+
+    setAddress('로딩 중...');
+    tryGeocode();
   }, [selectedHotspot]);
 
   if (!selectedHotspot) return null;

@@ -63,6 +63,14 @@ const KakaoMap = () => {
     circlesRef.current.forEach((circle) => circle.setMap(null));
     circlesRef.current = [];
 
+    // 기부 건수를 지역별로 계산 (dependency 문제 해결)
+    const donationCountByRegion = new Map<string, number>();
+    donations.forEach(d => {
+      if (d.regionName) {
+        donationCountByRegion.set(d.regionName, (donationCountByRegion.get(d.regionName) || 0) + 1);
+      }
+    });
+
     // 핫스팟 렌더링
     hotspots.forEach((hotspot) => {
       // 레이어 필터링
@@ -71,8 +79,7 @@ const KakaoMap = () => {
 
       // 이 핫스팟에 대한 기부 참여 확인
       const regionName = `${hotspot.lat.toFixed(2)}°N ${hotspot.lng.toFixed(2)}°E`;
-      const regionDonations = donations.filter(d => d.regionName === regionName);
-      const donationParticipation = regionDonations.length;
+      const donationParticipation = donationCountByRegion.get(regionName) || 0;
 
       // 우선 정화 추천 구역 확인 (고밀집도 + 저참여)
       const isHighPriority = hotspot.intensity > 0.7 && donationParticipation < 3;
@@ -101,7 +108,8 @@ const KakaoMap = () => {
       circlesRef.current.forEach((circle) => circle.setMap(null));
       circlesRef.current = [];
     };
-  }, [isLoaded, map, hotspots, isLoading, showFishingLayer, showDebrisLayer, setSelectedHotspot, donations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, map, hotspots, isLoading, showFishingLayer, showDebrisLayer, setSelectedHotspot, donations.length]);
 
   // 기부 영역 및 오버레이 렌더링
   useEffect(() => {
