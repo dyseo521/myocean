@@ -61,13 +61,19 @@ const DonateModal = () => {
     fetchAddress();
   }, [selectedLocation]);
 
-  // 모달이 열릴 때마다 초기화
+  // 모달이 열릴 때 상태 초기화 및 단계 결정
   useEffect(() => {
-    if (showDonateModal && selectedLocation) {
-      setStep('amount');
+    if (showDonateModal) {
       setDonorName(user?.name || '');
       setDonorPhone('');
       setDonorEmail('');
+
+      // 위치가 이미 선택되어 있으면 info 단계로, 없으면 amount 단계로
+      if (selectedLocation) {
+        setStep('info');
+      } else {
+        setStep('amount');
+      }
     }
   }, [showDonateModal, selectedLocation, user]);
 
