@@ -24,6 +24,7 @@ export interface Donation {
     southWest: { lat: number; lng: number };
     northEast: { lat: number; lng: number };
   };
+  polygon?: Array<{ lat: number; lng: number }>; // 마름모/다각형 영역
   date: string;
   hotspotId?: string;
   cleanupProgress: number; // 0-100%

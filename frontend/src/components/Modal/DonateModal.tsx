@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { v4 as uuidv4 } from 'uuid';
 import { saveDonation } from '@/utils/localStorage';
-import { calculateDonationArea, calculateDonationBounds, formatAmount } from '@/utils/donation';
+import { calculateDonationArea, calculateDonationBounds, calculateDiamondPolygon, formatAmount } from '@/utils/donation';
 import type { DonationAmount, Donation } from '@/types';
 
 const DONATION_AMOUNTS: DonationAmount[] = [100000, 1000000, 10000000];
@@ -42,6 +42,7 @@ const DonateModal = () => {
 
     const area = calculateDonationArea(selectedAmount);
     const bounds = calculateDonationBounds(selectedLocation, area);
+    const polygon = calculateDiamondPolygon(selectedLocation, area);
 
     const donation: Donation = {
       id: uuidv4(),
@@ -50,6 +51,7 @@ const DonateModal = () => {
       location: selectedLocation,
       area,
       bounds,
+      polygon,
       date: new Date().toISOString(),
       cleanupProgress: 0,
       regionName: `${selectedLocation.lat.toFixed(2)}°N ${selectedLocation.lng.toFixed(2)}°E`,

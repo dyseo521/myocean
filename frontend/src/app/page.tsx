@@ -13,6 +13,7 @@ import { useStore } from '../store/useStore';
 export default function Home() {
   const loadDonations = useStore((state) => state.loadDonations);
   const setIsMobileMenuOpen = useStore((state) => state.setIsMobileMenuOpen);
+  const realtimeNotifications = useStore((state) => state.realtimeNotifications);
 
   useEffect(() => {
     // 앱 시작 시 로컬스토리지에서 기부 데이터 로드
@@ -36,7 +37,7 @@ export default function Home() {
             {/* 햄버거 버튼 (항상 표시) */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 text-slate-600 hover:text-ocean-primary transition-colors active:scale-95"
+              className="relative p-2 text-slate-600 hover:text-ocean-primary transition-colors active:scale-95"
               aria-label="메뉴 열기"
             >
               <svg
@@ -52,6 +53,15 @@ export default function Home() {
                   d="M4 6h16M4 12h16M4 18h16"
                 />
               </svg>
+              {/* 알림 배지 */}
+              {realtimeNotifications.length > 0 && (
+                <span className="absolute top-0 right-0 flex h-5 w-5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 items-center justify-center text-white text-xs font-bold">
+                    {realtimeNotifications.length}
+                  </span>
+                </span>
+              )}
             </button>
           </div>
         </header>

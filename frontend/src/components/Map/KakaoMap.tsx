@@ -27,7 +27,7 @@ const KakaoMap = () => {
   const setSelectedDonationLocation = useStore((state) => state.setSelectedDonationLocation);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
 
-  const rectanglesRef = useRef<any[]>([]);
+  const polygonsRef = useRef<any[]>([]);
 
   // 지도 클릭 이벤트 (위치 선택 모드)
   useEffect(() => {
@@ -99,9 +99,9 @@ const KakaoMap = () => {
   useEffect(() => {
     if (!isLoaded || !map || !window.kakao) return;
 
-    // 기존 사각형 제거
-    rectanglesRef.current.forEach((rect) => rect.setMap(null));
-    rectanglesRef.current = [];
+    // 기존 폴리곤 제거
+    polygonsRef.current.forEach((polygon) => polygon.setMap(null));
+    polygonsRef.current = [];
 
     // 기존 오버레이 제거
     overlaysRef.current.forEach((overlay) => overlay.setMap(null));
@@ -109,23 +109,24 @@ const KakaoMap = () => {
 
     // 기부 영역 및 이름 렌더링
     donations.forEach((donation) => {
-      // 기부 영역이 있으면 Rectangle 표시
-      if (donation.bounds) {
-        const rectangle = new window.kakao.maps.Rectangle({
-          bounds: new window.kakao.maps.LatLngBounds(
-            new window.kakao.maps.LatLng(donation.bounds.southWest.lat, donation.bounds.southWest.lng),
-            new window.kakao.maps.LatLng(donation.bounds.northEast.lat, donation.bounds.northEast.lng)
-          ),
-          strokeWeight: 2,
+      // 기부 영역이 있으면 Polygon(마름모) 표시
+      if (donation.polygon && donation.polygon.length > 0) {
+        const path = donation.polygon.map(
+          (point) => new window.kakao.maps.LatLng(point.lat, point.lng)
+        );
+
+        const polygon = new window.kakao.maps.Polygon({
+          path,
+          strokeWeight: 4,
           strokeColor: '#0EA5E9',
-          strokeOpacity: 0.8,
+          strokeOpacity: 1,
           strokeStyle: 'solid',
           fillColor: '#0EA5E9',
-          fillOpacity: 0.2,
+          fillOpacity: 0.4,
         });
 
-        rectangle.setMap(map);
-        rectanglesRef.current.push(rectangle);
+        polygon.setMap(map);
+        polygonsRef.current.push(polygon);
       }
 
       // 기부자 이름 오버레이
@@ -154,8 +155,8 @@ const KakaoMap = () => {
     });
 
     return () => {
-      rectanglesRef.current.forEach((rect) => rect.setMap(null));
-      rectanglesRef.current = [];
+      polygonsRef.current.forEach((polygon) => polygon.setMap(null));
+      polygonsRef.current = [];
       overlaysRef.current.forEach((overlay) => overlay.setMap(null));
       overlaysRef.current = [];
     };

@@ -3,9 +3,9 @@ import { DonationAmount } from '@/types';
 // 기부 금액에 따른 영역 크기 계산 (km²)
 export const calculateDonationArea = (amount: DonationAmount): number => {
   const areaMap: Record<DonationAmount, number> = {
-    100000: 1,      // 10만원 = 1km²
-    1000000: 5,     // 100만원 = 5km²
-    10000000: 20,   // 1000만원 = 20km²
+    100000: 2,      // 10만원 = 2km²
+    1000000: 10,    // 100만원 = 10km²
+    10000000: 30,   // 1000만원 = 30km²
   };
   return areaMap[amount];
 };
@@ -101,4 +101,30 @@ export const calculateDonationBounds = (
       lng: center.lng + halfSideLng,
     },
   };
+};
+
+// 기부 금액과 중심 위치로부터 마름모 모양의 폴리곤 좌표 계산
+export const calculateDiamondPolygon = (
+  center: { lat: number; lng: number },
+  areaKm2: number
+): Array<{ lat: number; lng: number }> => {
+  // 마름모의 대각선 길이 계산 (면적 = (d1 * d2) / 2, d1 = d2 가정)
+  const diagonalKm = Math.sqrt(areaKm2 * 2);
+
+  // 위도 1도 ≈ 111km
+  const latDegreeInKm = 111;
+  // 경도 1도 ≈ 111km * cos(위도)
+  const lngDegreeInKm = 111 * Math.cos((center.lat * Math.PI) / 180);
+
+  // km를 도(degree)로 변환
+  const halfDiagonalLat = (diagonalKm / 2) / latDegreeInKm;
+  const halfDiagonalLng = (diagonalKm / 2) / lngDegreeInKm;
+
+  // 마름모 4개 꼭지점 (상, 우, 하, 좌)
+  return [
+    { lat: center.lat + halfDiagonalLat, lng: center.lng },          // 북
+    { lat: center.lat, lng: center.lng + halfDiagonalLng },          // 동
+    { lat: center.lat - halfDiagonalLat, lng: center.lng },          // 남
+    { lat: center.lat, lng: center.lng - halfDiagonalLng },          // 서
+  ];
 };
