@@ -79,25 +79,54 @@ const KakaoMap = () => {
       if (hotspot.type === 'fishing' && !showFishingLayer) return;
       if (hotspot.type === 'debris' && !showDebrisLayer) return;
 
-      // 수거모드에서는 펀딩 완료된 지역만 표시
-      if (mode === 'collection' && !isFundingComplete(hotspot, donations)) return;
-
       // 이 핫스팟에 대한 기부 참여 확인
       const regionName = `${hotspot.lat.toFixed(2)}°N ${hotspot.lng.toFixed(2)}°E`;
       const donationParticipation = donationCountByRegion.get(regionName) || 0;
 
-      // 우선 정화 추천 구역 확인 (고밀집도 + 저참여)
-      const isHighPriority = hotspot.intensity > 0.7 && donationParticipation < 3;
+      // 수거모드에서 펀딩 완료 여부 확인
+      const isFunded = isFundingComplete(hotspot, donations);
+      const isCollectionMode = mode === 'collection';
+
+      // 우선 정화 추천 구역 확인 (고밀집도 + 저참여) - 펀딩 모드에서만 적용
+      const isHighPriority = !isCollectionMode && hotspot.intensity > 0.7 && donationParticipation < 3;
+
+      // 수거모드에서의 스타일 조정
+      let strokeColor, fillColor, strokeOpacity, fillOpacity, strokeWeight;
+
+      if (isCollectionMode) {
+        if (isFunded) {
+          // 펀딩 완료: 초록색 강조
+          strokeColor = '#10B981'; // emerald-500
+          fillColor = '#10B981';
+          strokeOpacity = 1;
+          fillOpacity = 0.5;
+          strokeWeight = 3;
+        } else {
+          // 펀딩 미완료: 회색톤, 낮은 투명도
+          strokeColor = '#94A3B8'; // slate-400
+          fillColor = '#94A3B8';
+          strokeOpacity = 0.3;
+          fillOpacity = 0.1;
+          strokeWeight = 1;
+        }
+      } else {
+        // 펀딩 모드: 기존 로직
+        strokeColor = isHighPriority ? '#FFA500' : getHotspotColor(hotspot.intensity, hotspot.type);
+        fillColor = getHotspotColor(hotspot.intensity, hotspot.type);
+        strokeOpacity = isHighPriority ? 1 : 0.8;
+        fillOpacity = isHighPriority ? 0.5 : 0.3;
+        strokeWeight = isHighPriority ? 5 : 2;
+      }
 
       const circle = new window.kakao.maps.Circle({
         center: new window.kakao.maps.LatLng(hotspot.lat, hotspot.lng),
         radius: getHotspotRadius(hotspot.intensity),
-        strokeWeight: isHighPriority ? 5 : 2,
-        strokeColor: isHighPriority ? '#FFA500' : getHotspotColor(hotspot.intensity, hotspot.type),
-        strokeOpacity: isHighPriority ? 1 : 0.8,
-        strokeStyle: isHighPriority ? 'solid' : 'solid',
-        fillColor: getHotspotColor(hotspot.intensity, hotspot.type),
-        fillOpacity: isHighPriority ? 0.5 : 0.3,
+        strokeWeight,
+        strokeColor,
+        strokeOpacity,
+        strokeStyle: 'solid',
+        fillColor,
+        fillOpacity,
       });
 
       circle.setMap(map);
@@ -111,10 +140,16 @@ const KakaoMap = () => {
           setSelectedDonationLocation(location);
           setIsSelectingLocation(false);
           setShowDonateModal(true);
-        } else if (mode === 'collection') {
-          // 수거모드: 수거 가능 모달 열기
+        } else if (isCollectionMode) {
+          // 수거모드
           setSelectedHotspot(hotspot);
-          setShowCollectionModal(true);
+          if (isFunded) {
+            // 펀딩 완료: 수거 가능 모달 열기
+            setShowCollectionModal(true);
+          } else {
+            // 펀딩 미완료: 핫스팟 상세 모달 열기 (펀딩 독려)
+            // 상세 모달이 자동으로 열림
+          }
         } else {
           // 일반 펀딩 모드: 핫스팟 상세 모달 열기
           setSelectedHotspot(hotspot);
