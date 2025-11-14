@@ -44,24 +44,11 @@ export const loadKakaoMapScript = (): Promise<void> => {
       // kakao.maps.load()로 명시적으로 로드
       if (window.kakao && window.kakao.maps) {
         window.kakao.maps.load(() => {
-          // LatLng이 실제로 사용 가능한지 확인
-          const checkReady = setInterval(() => {
-            if (window.kakao.maps.LatLng) {
-              clearInterval(checkReady);
-              isLoading = false;
-              isLoaded = true;
-              resolve();
-            }
-          }, 50);
-
-          // 5초 타임아웃
-          setTimeout(() => {
-            clearInterval(checkReady);
-            if (!isLoaded) {
-              isLoading = false;
-              reject(new Error('카카오맵 API 초기화 타임아웃'));
-            }
-          }, 5000);
+          // load 콜백 내부에서 바로 완료 처리
+          // 이 시점에는 모든 API가 사용 가능함
+          isLoading = false;
+          isLoaded = true;
+          resolve();
         });
       } else {
         isLoading = false;
