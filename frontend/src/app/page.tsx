@@ -27,9 +27,12 @@ export default function Home() {
         {/* 헤더 */}
         <header className="absolute top-0 left-0 right-0 z-30 bg-white shadow-md">
           <div className="px-4 py-2 flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gradient-ocean">
-              마이오션
-            </h1>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🌊</span>
+              <h1 className="text-xl font-bold text-gradient-ocean">
+                마이오션
+              </h1>
+            </div>
             <p className="text-xs text-slate-600">
               깨끗한 바다
             </p>
