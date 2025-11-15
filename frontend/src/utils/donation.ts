@@ -129,15 +129,43 @@ export const calculateDiamondPolygon = (
   ];
 };
 
-// 특정 핫스팟에 대한 총 기부금 계산
+// 두 좌표 간 거리 계산 (km) - Haversine 공식
+const calculateDistance = (
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number => {
+  const R = 6371; // 지구 반경 (km)
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+// 특정 핫스팟에 대한 총 기부금 계산 (거리 기반)
 export const calculateTotalDonationForHotspot = (
   hotspot: Hotspot,
   donations: Donation[]
 ): number => {
-  const regionName = `${hotspot.lat.toFixed(2)}°N ${hotspot.lng.toFixed(2)}°E`;
+  // 핫스팟 반경 (기본 10km)
+  const HOTSPOT_RADIUS_KM = 10;
 
   return donations
-    .filter(d => d.regionName === regionName)
+    .filter(d => {
+      // 핫스팟 중심에서 반경 내의 모든 기부를 합산
+      const distance = calculateDistance(
+        hotspot.lat,
+        hotspot.lng,
+        d.location.lat,
+        d.location.lng
+      );
+      return distance <= HOTSPOT_RADIUS_KM;
+    })
     .reduce((sum, d) => sum + d.amount, 0);
 };
 
