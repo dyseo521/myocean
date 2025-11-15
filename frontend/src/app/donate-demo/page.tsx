@@ -12,7 +12,7 @@ export default function DonateDemo() {
 
   // 현재 저장된 데이터 개수 확인
   useEffect(() => {
-    const existingDonations = localStorage.getItem('donations');
+    const existingDonations = localStorage.getItem('myocean_donations');
     if (existingDonations) {
       try {
         const data = JSON.parse(existingDonations);
@@ -44,7 +44,7 @@ export default function DonateDemo() {
 
   const generateRandomDonations = (count: number) => {
     const donations: Donation[] = [];
-    const existingDonations = localStorage.getItem('donations');
+    const existingDonations = localStorage.getItem('myocean_donations');
     let existingData: Donation[] = [];
 
     if (existingDonations) {
@@ -97,7 +97,7 @@ export default function DonateDemo() {
     const allDonations = [...existingData, ...donations];
 
     // localStorage에 저장
-    localStorage.setItem('donations', JSON.stringify(allDonations));
+    localStorage.setItem('myocean_donations', JSON.stringify(allDonations));
 
     return donations.length;
   };
@@ -117,7 +117,7 @@ export default function DonateDemo() {
   };
 
   const handleReset = () => {
-    localStorage.removeItem('donations');
+    localStorage.removeItem('myocean_donations');
     setCurrentCount(0);
     setStatus('🗑️ 모든 기부 데이터가 삭제되었습니다.');
 
@@ -127,7 +127,7 @@ export default function DonateDemo() {
   };
 
   const handleInspect = () => {
-    const existingDonations = localStorage.getItem('donations');
+    const existingDonations = localStorage.getItem('myocean_donations');
     if (!existingDonations) {
       setStatus('❌ 저장된 데이터가 없습니다.');
       return;
