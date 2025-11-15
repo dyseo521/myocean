@@ -11,7 +11,7 @@ interface DetectionSuccessModalProps {
   onClose: () => void;
 }
 
-// 소나 이미지 파일명 리스트 (실제 파일명에 맞게 수정 필요)
+// 소나 이미지 파일명 리스트
 const SONAR_IMAGES = [
   'sonar1.jpg',
   'sonar2.jpg',
@@ -20,9 +20,6 @@ const SONAR_IMAGES = [
   'sonar5.jpg',
   'sonar6.jpg',
   'sonar7.jpg',
-  'sonar8.jpg',
-  'sonar9.jpg',
-  'sonar10.jpg',
 ];
 
 const DetectionSuccessModal = ({ isOpen, onClose }: DetectionSuccessModalProps) => {
@@ -33,7 +30,7 @@ const DetectionSuccessModal = ({ isOpen, onClose }: DetectionSuccessModalProps) 
   // 랜덤 소나 이미지 선택 (모달이 열릴 때마다 새로 선택)
   const randomSonarImage = useMemo(() => {
     const randomIndex = Math.floor(Math.random() * SONAR_IMAGES.length);
-    return `/data/image/${SONAR_IMAGES[randomIndex]}`;
+    return `/image/${SONAR_IMAGES[randomIndex]}`;
   }, [isOpen]);
 
   // 주소 가져오기
