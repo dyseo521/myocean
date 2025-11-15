@@ -79,7 +79,7 @@ const CollectionModal = ({ isOpen, onClose, onStartCollection }: CollectionModal
                 <span className="text-4xl">✓</span>
               </div>
               <h2 className="text-2xl font-bold">수거 가능!</h2>
-              <p className="text-sm opacity-90 mt-1">목표 금액을 달성했어요</p>
+              <p className="text-sm opacity-90 mt-1">충분한 펀딩이 모였어요</p>
             </div>
           </div>
 

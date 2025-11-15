@@ -170,8 +170,8 @@ export const checkAreaOverlap = (
     );
 
     // 거리가 두 반경의 합보다 작으면 겹침
-    // 약간의 여유(10%)를 두어 겹침 방지
-    if (distance < (newRadius + existingRadius) * 1.1) {
+    // 80% 이하일 때만 겹침으로 판단 (20% 정도는 겹쳐도 OK)
+    if (distance < (newRadius + existingRadius) * 0.8) {
       return true; // 겹침
     }
   }
@@ -201,7 +201,7 @@ export const calculateTotalDonationForHotspot = (
     .reduce((sum, d) => sum + d.amount, 0);
 };
 
-// 핫스팟의 펀딩 완료 여부 확인
+// 핫스팟의 펀딩 완료 여부 확인 (목표금액의 70% 이상이면 수거 가능)
 export const isFundingComplete = (
   hotspot: Hotspot,
   donations: Donation[]
@@ -209,7 +209,8 @@ export const isFundingComplete = (
   if (!hotspot.targetAmount) return false;
 
   const totalDonation = calculateTotalDonationForHotspot(hotspot, donations);
-  return totalDonation >= hotspot.targetAmount;
+  const FUNDING_THRESHOLD = 0.7; // 70% 이상이면 수거 가능
+  return totalDonation >= hotspot.targetAmount * FUNDING_THRESHOLD;
 };
 
 // 핫스팟의 펀딩 진행률 계산 (0-100%)
