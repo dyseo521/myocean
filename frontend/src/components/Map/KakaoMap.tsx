@@ -346,7 +346,7 @@ const LayerToggle = () => {
   const toggleDebrisLayer = useStore((state) => state.toggleDebrisLayer);
 
   return (
-    <div className="hidden md:block absolute top-4 left-4 bg-white rounded-lg shadow-lg p-3 z-20">
+    <div className="hidden md:block absolute top-20 left-4 bg-white rounded-lg shadow-lg p-3 z-20">
       <h3 className="text-sm font-bold mb-2 text-slate-700">레이어</h3>
       <div className="space-y-2">
         <label className="flex items-center gap-2 cursor-pointer">

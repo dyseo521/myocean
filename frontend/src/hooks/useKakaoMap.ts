@@ -46,7 +46,13 @@ export const useKakaoMap = (containerId: string, options: KakaoMapOptions) => {
 
         // 줌 컨트롤 추가
         const zoomControl = new window.kakao.maps.ZoomControl();
-        mapRef.current.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
+        mapRef.current.addControl(zoomControl, window.kakao.maps.ControlPosition.BOTTOMRIGHT);
+        
+        // 줌 컨트롤 위치 조정 (겹치지 않게 아래로 내림)
+        const zoomControlElement = document.querySelector('.kakao_maps_zoomcontrol');
+        if (zoomControlElement) {
+          (zoomControlElement as HTMLElement).style.bottom = '60px';
+        }
 
         isInitialized.current = true;
         setIsLoaded(true);

@@ -54,9 +54,6 @@ export default function Home() {
                 마이오션
               </h1>
             </div>
-            <p className="text-xs text-slate-600">
-              깨끗한 바다
-            </p>
 
             {/* 햄버거 버튼 (항상 표시) */}
             <button
