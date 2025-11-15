@@ -130,7 +130,7 @@ export const calculateDiamondPolygon = (
 };
 
 // 두 좌표 간 거리 계산 (km) - Haversine 공식
-const calculateDistance = (
+export const calculateDistance = (
   lat1: number,
   lng1: number,
   lat2: number,
@@ -145,6 +145,38 @@ const calculateDistance = (
     Math.sin(dLng / 2) * Math.sin(dLng / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
+};
+
+// 영역 겹침 체크 - 새로운 기부 위치가 기존 기부들과 겹치는지 확인
+export const checkAreaOverlap = (
+  newLocation: { lat: number; lng: number },
+  newArea: number,
+  existingDonations: Donation[]
+): boolean => {
+  // 다이아몬드의 대각선 길이 = √(2 * area) km
+  const newDiagonal = Math.sqrt(2 * newArea);
+  const newRadius = newDiagonal / 2; // 반대각선 (중심에서 꼭지점까지)
+
+  for (const donation of existingDonations) {
+    const existingDiagonal = Math.sqrt(2 * donation.area);
+    const existingRadius = existingDiagonal / 2;
+
+    // 두 중심점 간의 거리
+    const distance = calculateDistance(
+      newLocation.lat,
+      newLocation.lng,
+      donation.location.lat,
+      donation.location.lng
+    );
+
+    // 거리가 두 반경의 합보다 작으면 겹침
+    // 약간의 여유(10%)를 두어 겹침 방지
+    if (distance < (newRadius + existingRadius) * 1.1) {
+      return true; // 겹침
+    }
+  }
+
+  return false; // 겹치지 않음
 };
 
 // 특정 핫스팟에 대한 총 기부금 계산 (거리 기반)

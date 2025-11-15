@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Donation } from '@/types';
-import { calculateDiamondPolygon, calculateDonationArea } from '@/utils/donation';
+import { calculateDiamondPolygon, calculateDonationArea, checkAreaOverlap } from '@/utils/donation';
 import { useHotspots } from '@/hooks/useHotspots';
 
 export default function DonateDemo() {
@@ -71,32 +71,53 @@ export default function DonateDemo() {
         amount = 100000;   // 25% - 10만원
       }
 
-      // 90% 확률로 실제 핫스팟 근처 생성 (목표금액 달성용)
+      const area = calculateDonationArea(amount);
+
+      // 겹치지 않는 위치 찾기 (최대 10번 시도)
       let lat: number, lng: number, regionName: string;
+      let attempts = 0;
+      let validLocation = false;
 
-      if (Math.random() < 0.9 && hotspots.length > 0) {
-        // 랜덤 핫스팟 선택
-        const hotspot = hotspots[Math.floor(Math.random() * hotspots.length)];
+      while (!validLocation && attempts < 10) {
+        attempts++;
 
-        // 핫스팟 중심에서 5km 반경 내에 랜덤 배치
-        const radiusKm = 5;
-        const radiusInDegrees = radiusKm / 111; // 1도 ≈ 111km
+        // 90% 확률로 실제 핫스팟 근처 생성 (목표금액 달성용)
+        if (Math.random() < 0.9 && hotspots.length > 0) {
+          // 랜덤 핫스팟 선택
+          const hotspot = hotspots[Math.floor(Math.random() * hotspots.length)];
 
-        const randomAngle = Math.random() * 2 * Math.PI;
-        const randomRadius = Math.random() * radiusInDegrees;
+          // 핫스팟 중심에서 5km 반경 내에 랜덤 배치
+          const radiusKm = 5;
+          const radiusInDegrees = radiusKm / 111; // 1도 ≈ 111km
 
-        lat = hotspot.lat + randomRadius * Math.cos(randomAngle);
-        lng = hotspot.lng + randomRadius * Math.sin(randomAngle);
-        regionName = `${lat.toFixed(2)}°N ${lng.toFixed(2)}°E`;
-      } else {
-        // 10%는 랜덤 위치 (분산 효과)
-        lat = 35.05 + Math.random() * 0.20; // 35.05 ~ 35.25
-        lng = 129.05 + Math.random() * 0.25; // 129.05 ~ 129.30
-        regionName = `${lat.toFixed(2)}°N ${lng.toFixed(2)}°E`;
+          const randomAngle = Math.random() * 2 * Math.PI;
+          const randomRadius = Math.random() * radiusInDegrees;
+
+          lat = hotspot.lat + randomRadius * Math.cos(randomAngle);
+          lng = hotspot.lng + randomRadius * Math.sin(randomAngle);
+        } else {
+          // 10%는 랜덤 위치 (분산 효과)
+          lat = 35.05 + Math.random() * 0.20; // 35.05 ~ 35.25
+          lng = 129.05 + Math.random() * 0.25; // 129.05 ~ 129.30
+        }
+
+        // 겹침 체크 (기존 데이터 + 현재까지 생성된 더미 데이터)
+        const allDonations = [...existingData, ...donations];
+        const hasOverlap = checkAreaOverlap({ lat, lng }, area, allDonations);
+
+        if (!hasOverlap) {
+          validLocation = true;
+          regionName = `${lat.toFixed(2)}°N ${lng.toFixed(2)}°E`;
+        }
+      }
+
+      // 10번 시도해도 겹치지 않는 위치를 못 찾으면 건너뛰기
+      if (!validLocation) {
+        console.warn(`더미 데이터 ${i + 1}번째 생성 실패 (겹침)`);
+        continue;
       }
 
       // 기부 영역 계산
-      const area = calculateDonationArea(amount);
       const polygon = calculateDiamondPolygon({ lat, lng }, area);
 
       // 랜덤 날짜 (최근 30일 이내)

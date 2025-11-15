@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { v4 as uuidv4 } from 'uuid';
 import { saveDonation } from '@/utils/localStorage';
-import { calculateDonationArea, calculateDonationBounds, calculateDiamondPolygon, formatAmount } from '@/utils/donation';
+import { calculateDonationArea, calculateDonationBounds, calculateDiamondPolygon, formatAmount, checkAreaOverlap } from '@/utils/donation';
 import type { DonationAmount, Donation } from '@/types';
 
 const DONATION_AMOUNTS: DonationAmount[] = [100000, 1000000, 10000000];
@@ -23,6 +23,7 @@ const DonateModal = () => {
   const showDonateModal = useStore((state) => state.showDonateModal);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
   const user = useStore((state) => state.user);
+  const donations = useStore((state) => state.donations);
   const addDonation = useStore((state) => state.addDonation);
   const addNotification = useStore((state) => state.addNotification);
 
@@ -95,6 +96,17 @@ const DonateModal = () => {
       handleSelectLocation();
       return;
     }
+
+    // 영역 겹침 체크
+    const area = calculateDonationArea(selectedAmount);
+    const hasOverlap = checkAreaOverlap(selectedLocation, area, donations);
+
+    if (hasOverlap) {
+      alert('⚠️ 이미 다른 분이 점유한 영역과 겹칩니다.\n다른 위치를 선택해주세요.');
+      handleSelectLocation(); // 다시 위치 선택 모드로
+      return;
+    }
+
     setStep('info');
   };
 
@@ -108,6 +120,16 @@ const DonateModal = () => {
 
   const handleConfirmYes = () => {
     const area = calculateDonationArea(selectedAmount);
+
+    // 최종 겹침 체크 (한번 더 확인)
+    const hasOverlap = checkAreaOverlap(selectedLocation!, area, donations);
+    if (hasOverlap) {
+      alert('⚠️ 이미 다른 분이 점유한 영역과 겹칩니다.\n다시 처음부터 진행해주세요.');
+      setStep('amount');
+      setSelectedLocation(null);
+      return;
+    }
+
     const bounds = calculateDonationBounds(selectedLocation!, area);
     const polygon = calculateDiamondPolygon(selectedLocation!, area);
 
