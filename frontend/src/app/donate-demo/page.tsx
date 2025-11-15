@@ -2,62 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Donation, Hotspot } from '@/types';
+import { Donation } from '@/types';
 import { calculateDiamondPolygon, calculateDonationArea } from '@/utils/donation';
+import { useHotspots } from '@/hooks/useHotspots';
 
 export default function DonateDemo() {
   const router = useRouter();
   const [status, setStatus] = useState<string>('');
   const [currentCount, setCurrentCount] = useState<number>(0);
-  const [hotspots, setHotspots] = useState<Hotspot[]>([]);
 
-  // 핫스팟 데이터 로드
-  useEffect(() => {
-    fetch('/data/hotspot_data.json')
-      .then(res => res.json())
-      .then(data => {
-        const loadedHotspots: Hotspot[] = [];
-
-        // 조업활동 핫스팟
-        data.fishing_hotspots?.forEach((item: any, index: number) => {
-          const baseAmount = 40000000;
-          const variableAmount = Math.floor(item.intensity * 20000000);
-          const randomOffset = Math.floor((Math.random() * 0.2 - 0.1) * baseAmount);
-          const targetAmount = baseAmount + variableAmount + randomOffset;
-
-          loadedHotspots.push({
-            id: `fishing-${index}`,
-            lat: item.lat,
-            lng: item.lng,
-            intensity: item.intensity,
-            activityCount: item.activity_count,
-            type: 'fishing',
-            targetAmount: Math.round(targetAmount / 1000000) * 1000000,
-          });
-        });
-
-        // 쓰레기 핫스팟
-        data.debris_hotspots?.forEach((item: any, index: number) => {
-          const baseAmount = 40000000;
-          const variableAmount = Math.floor(item.intensity * 20000000);
-          const randomOffset = Math.floor((Math.random() * 0.2 - 0.1) * baseAmount);
-          const targetAmount = baseAmount + variableAmount + randomOffset;
-
-          loadedHotspots.push({
-            id: `debris-${index}`,
-            lat: item.lat,
-            lng: item.lng,
-            intensity: item.intensity,
-            activityCount: item.debris_count,
-            type: 'debris',
-            targetAmount: Math.round(targetAmount / 1000000) * 1000000,
-          });
-        });
-
-        setHotspots(loadedHotspots);
-      })
-      .catch(err => console.error('Failed to load hotspots:', err));
-  }, []);
+  // 핫스팟 데이터 로드 (기존 훅 사용)
+  const { hotspots } = useHotspots();
 
   // 현재 저장된 데이터 개수 확인
   useEffect(() => {
