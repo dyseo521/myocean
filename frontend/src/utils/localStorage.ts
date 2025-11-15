@@ -73,12 +73,15 @@ export const getTopDonors = (limit: number = 10) => {
   });
 
   return Array.from(donorMap.entries())
-    .map(([name, data], index) => ({
-      rank: index + 1,
+    .map(([name, data]) => ({
       name,
       amount: data.amount,
       donationCount: data.count,
     }))
     .sort((a, b) => b.amount - a.amount)
-    .slice(0, limit);
+    .slice(0, limit)
+    .map((donor, index) => ({
+      ...donor,
+      rank: index + 1,
+    }));
 };

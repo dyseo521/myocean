@@ -13,13 +13,23 @@ interface DetectionSuccessModalProps {
 
 // 소나 이미지 파일명 리스트
 const SONAR_IMAGES = [
-  'sonar1.jpg',
-  'sonar2.jpg',
-  'sonar3.jpg',
-  'sonar4.jpg',
-  'sonar5.jpg',
-  'sonar6.jpg',
-  'sonar7.jpg',
+  'KakaoTalk_20251115_100837439_01.jpg',
+  'KakaoTalk_20251115_100837439_02.jpg',
+  'KakaoTalk_20251115_100837439_03.jpg',
+  'KakaoTalk_20251115_100837439_04.jpg',
+  'KakaoTalk_20251115_100837439_05.jpg',
+  'KakaoTalk_20251115_100837439_06.jpg',
+  'KakaoTalk_20251115_100837439_07.jpg',
+  'KakaoTalk_20251115_100837439_08.jpg',
+  'KakaoTalk_20251115_100837439_09.jpg',
+  'KakaoTalk_20251115_100837439_10.jpg',
+  'KakaoTalk_20251115_100837439_11.jpg',
+  'KakaoTalk_20251115_100837439_12.jpg',
+  'KakaoTalk_20251115_100837439_13.jpg',
+  'KakaoTalk_20251115_100837439_14.jpg',
+  'KakaoTalk_20251115_100837439_15.jpg',
+  'KakaoTalk_20251115_100837439_16.jpg',
+  'KakaoTalk_20251115_100837439_17.jpg',
 ];
 
 const DetectionSuccessModal = ({ isOpen, onClose }: DetectionSuccessModalProps) => {
