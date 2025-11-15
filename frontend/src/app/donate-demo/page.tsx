@@ -34,13 +34,22 @@ export default function DonateDemo() {
   // 더미 기부 금액 옵션
   const amounts = [100000, 1000000, 10000000] as const;
 
-  // 부산 해역 좌표 범위
+  // 부산 앞바다 좌표 범위 (육지 제외, 바다만)
   const busanArea = {
-    latMin: 35.0,
-    latMax: 35.3,
-    lngMin: 128.9,
+    latMin: 35.05,
+    latMax: 35.25,
+    lngMin: 129.05,  // 해안선보다 동쪽 (바다 쪽)
     lngMax: 129.3,
   };
+
+  // 수거모드 테스트를 위한 핫스팟 위치 (대략적인 위치)
+  const testHotspots = [
+    { lat: 35.10, lng: 129.15 },
+    { lat: 35.15, lng: 129.20 },
+    { lat: 35.08, lng: 129.25 },
+    { lat: 35.20, lng: 129.10 },
+    { lat: 35.12, lng: 129.18 },
+  ];
 
   const generateRandomDonations = (count: number) => {
     const donations: Donation[] = [];
@@ -59,12 +68,30 @@ export default function DonateDemo() {
       // 랜덤 기부자
       const donorName = dummyDonors[Math.floor(Math.random() * dummyDonors.length)];
 
-      // 랜덤 금액
-      const amount = amounts[Math.floor(Math.random() * amounts.length)];
+      // 랜덤 금액 (수거모드 테스트를 위해 1000만원 비율 증가)
+      let amount: typeof amounts[number];
+      const rand = Math.random();
+      if (rand < 0.4) {
+        amount = 10000000; // 40% - 1000만원
+      } else if (rand < 0.7) {
+        amount = 1000000;  // 30% - 100만원
+      } else {
+        amount = 100000;   // 30% - 10만원
+      }
 
-      // 랜덤 위치 (부산 해역)
-      const lat = busanArea.latMin + Math.random() * (busanArea.latMax - busanArea.latMin);
-      const lng = busanArea.lngMin + Math.random() * (busanArea.lngMax - busanArea.lngMin);
+      let lat: number, lng: number;
+
+      // 50% 확률로 핫스팟 근처에 집중 생성 (목표금액 달성용)
+      if (Math.random() < 0.5 && testHotspots.length > 0) {
+        const hotspot = testHotspots[Math.floor(Math.random() * testHotspots.length)];
+        // 핫스팟 근처 ±0.02도 범위 내
+        lat = hotspot.lat + (Math.random() - 0.5) * 0.04;
+        lng = hotspot.lng + (Math.random() - 0.5) * 0.04;
+      } else {
+        // 랜덤 위치 (부산 앞바다)
+        lat = busanArea.latMin + Math.random() * (busanArea.latMax - busanArea.latMin);
+        lng = busanArea.lngMin + Math.random() * (busanArea.lngMax - busanArea.lngMin);
+      }
 
       // 지역명 생성
       const regionName = `${lat.toFixed(2)}°N ${lng.toFixed(2)}°E`;
