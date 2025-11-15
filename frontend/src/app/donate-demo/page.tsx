@@ -2,13 +2,62 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Donation } from '@/types';
+import { Donation, Hotspot } from '@/types';
 import { calculateDiamondPolygon, calculateDonationArea } from '@/utils/donation';
 
 export default function DonateDemo() {
   const router = useRouter();
   const [status, setStatus] = useState<string>('');
   const [currentCount, setCurrentCount] = useState<number>(0);
+  const [hotspots, setHotspots] = useState<Hotspot[]>([]);
+
+  // 핫스팟 데이터 로드
+  useEffect(() => {
+    fetch('/data/hotspot_data.json')
+      .then(res => res.json())
+      .then(data => {
+        const loadedHotspots: Hotspot[] = [];
+
+        // 조업활동 핫스팟
+        data.fishing_hotspots?.forEach((item: any, index: number) => {
+          const baseAmount = 40000000;
+          const variableAmount = Math.floor(item.intensity * 20000000);
+          const randomOffset = Math.floor((Math.random() * 0.2 - 0.1) * baseAmount);
+          const targetAmount = baseAmount + variableAmount + randomOffset;
+
+          loadedHotspots.push({
+            id: `fishing-${index}`,
+            lat: item.lat,
+            lng: item.lng,
+            intensity: item.intensity,
+            activityCount: item.activity_count,
+            type: 'fishing',
+            targetAmount: Math.round(targetAmount / 1000000) * 1000000,
+          });
+        });
+
+        // 쓰레기 핫스팟
+        data.debris_hotspots?.forEach((item: any, index: number) => {
+          const baseAmount = 40000000;
+          const variableAmount = Math.floor(item.intensity * 20000000);
+          const randomOffset = Math.floor((Math.random() * 0.2 - 0.1) * baseAmount);
+          const targetAmount = baseAmount + variableAmount + randomOffset;
+
+          loadedHotspots.push({
+            id: `debris-${index}`,
+            lat: item.lat,
+            lng: item.lng,
+            intensity: item.intensity,
+            activityCount: item.debris_count,
+            type: 'debris',
+            targetAmount: Math.round(targetAmount / 1000000) * 1000000,
+          });
+        });
+
+        setHotspots(loadedHotspots);
+      })
+      .catch(err => console.error('Failed to load hotspots:', err));
+  }, []);
 
   // 현재 저장된 데이터 개수 확인
   useEffect(() => {
@@ -34,24 +83,12 @@ export default function DonateDemo() {
   // 더미 기부 금액 옵션
   const amounts = [100000, 1000000, 10000000] as const;
 
-  // 부산 앞바다 좌표 범위 (육지 제외, 바다만)
-  const busanArea = {
-    latMin: 35.05,
-    latMax: 35.25,
-    lngMin: 129.05,  // 해안선보다 동쪽 (바다 쪽)
-    lngMax: 129.3,
-  };
-
-  // 수거모드 테스트를 위한 핫스팟 위치 (대략적인 위치)
-  const testHotspots = [
-    { lat: 35.10, lng: 129.15 },
-    { lat: 35.15, lng: 129.20 },
-    { lat: 35.08, lng: 129.25 },
-    { lat: 35.20, lng: 129.10 },
-    { lat: 35.12, lng: 129.18 },
-  ];
-
   const generateRandomDonations = (count: number) => {
+    if (hotspots.length === 0) {
+      setStatus('❌ 핫스팟 데이터 로딩 중... 잠시 후 다시 시도하세요');
+      return 0;
+    }
+
     const donations: Donation[] = [];
     const existingDonations = localStorage.getItem('myocean_donations');
     let existingData: Donation[] = [];
@@ -71,30 +108,30 @@ export default function DonateDemo() {
       // 랜덤 금액 (수거모드 테스트를 위해 1000만원 비율 증가)
       let amount: typeof amounts[number];
       const rand = Math.random();
-      if (rand < 0.4) {
-        amount = 10000000; // 40% - 1000만원
-      } else if (rand < 0.7) {
-        amount = 1000000;  // 30% - 100만원
+      if (rand < 0.5) {
+        amount = 10000000; // 50% - 1000만원
+      } else if (rand < 0.75) {
+        amount = 1000000;  // 25% - 100만원
       } else {
-        amount = 100000;   // 30% - 10만원
+        amount = 100000;   // 25% - 10만원
       }
 
-      let lat: number, lng: number;
+      // 80% 확률로 실제 핫스팟 좌표 사용 (목표금액 달성용)
+      let lat: number, lng: number, regionName: string;
 
-      // 50% 확률로 핫스팟 근처에 집중 생성 (목표금액 달성용)
-      if (Math.random() < 0.5 && testHotspots.length > 0) {
-        const hotspot = testHotspots[Math.floor(Math.random() * testHotspots.length)];
-        // 핫스팟 근처 ±0.02도 범위 내
-        lat = hotspot.lat + (Math.random() - 0.5) * 0.04;
-        lng = hotspot.lng + (Math.random() - 0.5) * 0.04;
+      if (Math.random() < 0.8 && hotspots.length > 0) {
+        // 랜덤 핫스팟 선택
+        const hotspot = hotspots[Math.floor(Math.random() * hotspots.length)];
+        lat = hotspot.lat;
+        lng = hotspot.lng;
+        // 핫스팟과 동일한 regionName 사용 (중요!)
+        regionName = `${hotspot.lat.toFixed(2)}°N ${hotspot.lng.toFixed(2)}°E`;
       } else {
-        // 랜덤 위치 (부산 앞바다)
-        lat = busanArea.latMin + Math.random() * (busanArea.latMax - busanArea.latMin);
-        lng = busanArea.lngMin + Math.random() * (busanArea.lngMax - busanArea.lngMin);
+        // 20%는 랜덤 위치 (분산 효과)
+        lat = 35.05 + Math.random() * 0.20; // 35.05 ~ 35.25
+        lng = 129.05 + Math.random() * 0.25; // 129.05 ~ 129.30
+        regionName = `${lat.toFixed(2)}°N ${lng.toFixed(2)}°E`;
       }
-
-      // 지역명 생성
-      const regionName = `${lat.toFixed(2)}°N ${lng.toFixed(2)}°E`;
 
       // 기부 영역 계산
       const area = calculateDonationArea(amount);

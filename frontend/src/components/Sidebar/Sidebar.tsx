@@ -2,6 +2,8 @@
 
 import { useStore } from '@/store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useHotspots } from '@/hooks/useHotspots';
+import { isFundingComplete } from '@/utils/donation';
 import LoginButton from './LoginButton';
 import DonateButton from './DonateButton';
 import MyOceanButton from './MyOceanButton';
@@ -15,13 +17,32 @@ const Sidebar = () => {
 
   const mode = useStore((state) => state.mode);
   const setMode = useStore((state) => state.setMode);
+  const donations = useStore((state) => state.donations);
+  const setSelectedHotspot = useStore((state) => state.setSelectedHotspot);
+  const setShowCollectionModal = useStore((state) => state.setShowCollectionModal);
 
   const showFishingLayer = useStore((state) => state.showFishingLayer);
   const showDebrisLayer = useStore((state) => state.showDebrisLayer);
   const toggleFishingLayer = useStore((state) => state.toggleFishingLayer);
   const toggleDebrisLayer = useStore((state) => state.toggleDebrisLayer);
 
+  const { hotspots } = useHotspots();
+
+  // 수거 가능한 핫스팟 찾기 (펀딩 완료된 핫스팟)
+  const collectionAvailableHotspots = hotspots.filter(hotspot =>
+    isFundingComplete(hotspot, donations)
+  );
+
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  const handleStartCollection = () => {
+    if (collectionAvailableHotspots.length > 0) {
+      // 첫 번째 수거 가능한 핫스팟 선택
+      setSelectedHotspot(collectionAvailableHotspots[0]);
+      setShowCollectionModal(true);
+      closeMobileMenu();
+    }
+  };
 
   const handleLogout = () => {
     if (confirm('로그아웃 하시겠습니까?')) {
@@ -116,6 +137,32 @@ const Sidebar = () => {
                     </>
                   ) : (
                     <>
+                      {/* 수거 시작 버튼 */}
+                      <button
+                        onClick={handleStartCollection}
+                        disabled={collectionAvailableHotspots.length === 0}
+                        className={`w-full py-3 text-base font-bold rounded-lg transition-all ${
+                          collectionAvailableHotspots.length > 0
+                            ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg hover:shadow-xl active:scale-95'
+                            : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                        }`}
+                      >
+                        {collectionAvailableHotspots.length > 0
+                          ? `🚢 수거 시작 (${collectionAvailableHotspots.length}개 가능)`
+                          : '🚢 수거 가능한 지역 없음'
+                        }
+                      </button>
+
+                      {/* 수거 가능 지역 안내 */}
+                      {collectionAvailableHotspots.length === 0 && (
+                        <div className="card bg-yellow-50 border-2 border-yellow-200">
+                          <p className="text-sm text-yellow-800">
+                            💡 펀딩이 완료된 지역이 없습니다.<br/>
+                            펀딩모드로 돌아가서 기부에 참여해주세요!
+                          </p>
+                        </div>
+                      )}
+
                       <button
                         onClick={() => {
                           setMode('funding');
