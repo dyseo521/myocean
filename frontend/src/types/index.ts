@@ -7,6 +7,7 @@ export interface Hotspot {
   activityCount: number;
   type: 'fishing' | 'debris';
   regionName?: string;
+  targetAmount?: number; // 목표 금액 (원)
 }
 
 // 기부 정보 타입
@@ -19,6 +20,12 @@ export interface Donation {
     lng: number;
   };
   area: number; // km²
+  bounds?: {
+    // 기부 영역의 사각형 경계
+    southWest: { lat: number; lng: number };
+    northEast: { lat: number; lng: number };
+  };
+  polygon?: Array<{ lat: number; lng: number }>; // 마름모/다각형 영역
   date: string;
   hotspotId?: string;
   cleanupProgress: number; // 0-100%

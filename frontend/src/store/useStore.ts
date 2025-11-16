@@ -1,3 +1,5 @@
+'use client'
+
 import { create } from 'zustand';
 import { Donation, User, Hotspot } from '@/types';
 import { getDonations, getCurrentUser, setCurrentUser as saveUser, logout as clearUser } from '@/utils/localStorage';
@@ -8,6 +10,10 @@ interface AppState {
   isLoggedIn: boolean;
   login: (name: string) => void;
   logout: () => void;
+
+  // 모드 관련
+  mode: 'funding' | 'collection';
+  setMode: (mode: 'funding' | 'collection') => void;
 
   // 기부 관련
   donations: Donation[];
@@ -22,9 +28,19 @@ interface AppState {
   showDonateModal: boolean;
   showMyOceanModal: boolean;
   showRankingModal: boolean;
+  showCollectionModal: boolean;
+  showSonarTrackingModal: boolean;
+  showDetectionSuccessModal: boolean;
   setShowDonateModal: (show: boolean) => void;
   setShowMyOceanModal: (show: boolean) => void;
   setShowRankingModal: (show: boolean) => void;
+  setShowCollectionModal: (show: boolean) => void;
+  setShowSonarTrackingModal: (show: boolean) => void;
+  setShowDetectionSuccessModal: (show: boolean) => void;
+
+  // 모바일 메뉴
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
 
   // 지도 레이어
   showFishingLayer: boolean;
@@ -36,20 +52,33 @@ interface AppState {
   realtimeNotifications: Array<{ id: string; name: string; amount: number; region: string }>;
   addNotification: (notification: { name: string; amount: number; region: string }) => void;
   removeNotification: (id: string) => void;
+
+  // 지도 위치 선택 모드
+  isSelectingLocation: boolean;
+  selectedDonationLocation: { lat: number; lng: number } | null;
+  setIsSelectingLocation: (selecting: boolean) => void;
+  setSelectedDonationLocation: (location: { lat: number; lng: number } | null) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
-  // 초기 상태
-  user: getCurrentUser(),
-  isLoggedIn: !!getCurrentUser(),
-  donations: getDonations(),
+  // 초기 상태 - SSR 호환을 위해 null/빈 배열로 시작
+  user: null,
+  isLoggedIn: false,
+  mode: 'funding',
+  donations: [],
   selectedHotspot: null,
   showDonateModal: false,
   showMyOceanModal: false,
   showRankingModal: false,
+  showCollectionModal: false,
+  showSonarTrackingModal: false,
+  showDetectionSuccessModal: false,
+  isMobileMenuOpen: false,
   showFishingLayer: true,
   showDebrisLayer: true,
   realtimeNotifications: [],
+  isSelectingLocation: false,
+  selectedDonationLocation: null,
 
   // 사용자 액션
   login: (name: string) => {
@@ -66,6 +95,11 @@ export const useStore = create<AppState>((set, get) => ({
     set({ user: null, isLoggedIn: false });
   },
 
+  // 모드 액션
+  setMode: (mode: 'funding' | 'collection') => {
+    set({ mode });
+  },
+
   // 기부 액션
   addDonation: (donation: Donation) => {
     set((state) => ({
@@ -74,7 +108,17 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   loadDonations: () => {
-    set({ donations: getDonations() });
+    const donations = getDonations();
+    const user = getCurrentUser();
+    console.log(`[useStore] loadDonations 실행 - ${donations.length}개 로드됨`);
+    if (donations.length > 0) {
+      console.log('[useStore] 첫 번째 기부 데이터:', donations[0]);
+    }
+    set({
+      donations,
+      user,
+      isLoggedIn: !!user
+    });
   },
 
   // 핫스팟 선택
@@ -82,17 +126,48 @@ export const useStore = create<AppState>((set, get) => ({
     set({ selectedHotspot: hotspot });
   },
 
-  // 모달 제어
+  // 모달 제어 (하나만 열리도록)
   setShowDonateModal: (show: boolean) => {
-    set({ showDonateModal: show });
+    set({
+      showDonateModal: show,
+      showMyOceanModal: false,
+      showRankingModal: false,
+    });
   },
 
   setShowMyOceanModal: (show: boolean) => {
-    set({ showMyOceanModal: show });
+    set({
+      showMyOceanModal: show,
+      showDonateModal: false,
+      showRankingModal: false,
+      // 나의 바다 열 때 알림 모두 제거
+      realtimeNotifications: show ? [] : get().realtimeNotifications,
+    });
   },
 
   setShowRankingModal: (show: boolean) => {
-    set({ showRankingModal: show });
+    set({
+      showRankingModal: show,
+      showDonateModal: false,
+      showMyOceanModal: false,
+    });
+  },
+
+  setShowCollectionModal: (show: boolean) => {
+    set({ showCollectionModal: show });
+  },
+
+  setShowSonarTrackingModal: (show: boolean) => {
+    set({ showSonarTrackingModal: show });
+  },
+
+  setShowDetectionSuccessModal: (show: boolean) => {
+    set({ showDetectionSuccessModal: show });
+  },
+
+  // 모바일 메뉴 제어
+  setIsMobileMenuOpen: (open: boolean) => {
+    set({ isMobileMenuOpen: open });
   },
 
   // 레이어 토글
@@ -110,16 +185,21 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       realtimeNotifications: [...state.realtimeNotifications, { ...notification, id }],
     }));
-
-    // 3초 후 자동 제거
-    setTimeout(() => {
-      get().removeNotification(id);
-    }, 3000);
+    // 자동 제거 안 함 - 나의 바다 열 때까지 유지
   },
 
   removeNotification: (id: string) => {
     set((state) => ({
       realtimeNotifications: state.realtimeNotifications.filter((n) => n.id !== id),
     }));
+  },
+
+  // 지도 위치 선택
+  setIsSelectingLocation: (selecting: boolean) => {
+    set({ isSelectingLocation: selecting });
+  },
+
+  setSelectedDonationLocation: (location: { lat: number; lng: number } | null) => {
+    set({ selectedDonationLocation: location });
   },
 }));

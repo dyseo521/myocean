@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { getDonationsByRegion } from '@/utils/localStorage';
@@ -8,6 +11,45 @@ const HotspotDetailModal = () => {
   const setSelectedHotspot = useStore((state) => state.setSelectedHotspot);
   const setShowDonateModal = useStore((state) => state.setShowDonateModal);
   const user = useStore((state) => state.user);
+  const [address, setAddress] = useState<string>('');
+
+  // 역지오코딩: 좌표 -> 주소
+  useEffect(() => {
+    if (!selectedHotspot) return;
+
+    // Kakao Maps API가 로드될 때까지 대기
+    const tryGeocode = () => {
+      if (!window.kakao?.maps?.services) {
+        console.log('Kakao Maps services not loaded yet, retrying...');
+        setTimeout(tryGeocode, 100);
+        return;
+      }
+
+      try {
+        const geocoder = new window.kakao.maps.services.Geocoder();
+
+        geocoder.coord2Address(selectedHotspot.lng, selectedHotspot.lat, (result: any, status: any) => {
+          console.log('Geocoding result:', { result, status });
+
+          if (status === window.kakao.maps.services.Status.OK && result && result.length > 0) {
+            const addr = result[0].address;
+            const fullAddr = addr.address_name || '';
+            console.log('Address found:', fullAddr);
+            setAddress(fullAddr || 'FAILED');
+          } else {
+            console.warn('Geocoding failed:', status);
+            setAddress('FAILED');
+          }
+        });
+      } catch (error) {
+        console.error('Geocoding error:', error);
+        setAddress('FAILED');
+      }
+    };
+
+    setAddress('');
+    tryGeocode();
+  }, [selectedHotspot]);
 
   if (!selectedHotspot) return null;
 
@@ -16,6 +58,16 @@ const HotspotDetailModal = () => {
   const totalDonated = donations.reduce((sum, d) => sum + d.amount, 0);
   const targetAmount = 10000000; // 목표: 1000만원
   const progressPercent = Math.min(100, (totalDonated / targetAmount) * 100);
+
+  // 밀집도 및 기부 참여율 기반 영역 보너스 계산
+  const intensity = selectedHotspot.intensity;
+  const donationParticipation = donations.length;
+  const bonusMultiplier = intensity > 0.7 && donationParticipation < 3
+    ? 1.5 // 고밀집도 + 저참여 = 50% 보너스
+    : intensity > 0.5
+    ? 1.3 // 중밀집도 = 30% 보너스
+    : 1.0; // 기본
+  const isHighPriority = intensity > 0.7 && donationParticipation < 3;
 
   const handleDonate = () => {
     if (!user) {
@@ -28,23 +80,24 @@ const HotspotDetailModal = () => {
 
   return (
     <AnimatePresence>
-      <div className="modal-backdrop" onClick={() => setSelectedHotspot(null)}>
+      <div className="absolute inset-0 bg-black bg-opacity-50 z-50" onClick={() => setSelectedHotspot(null)}>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="modal-container"
+          className="absolute inset-0 flex items-end justify-center p-0"
         >
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <div className="bg-white rounded-t-3xl shadow-2xl p-6 w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-4">
-              <h2 className="text-xl font-bold text-slate-800">
+              <h2 className="text-lg md:text-xl font-bold text-slate-800">
                 {selectedHotspot.type === 'fishing' ? '⚓ 조업활동 지역' : '🗑️ 해양쓰레기 지역'}
               </h2>
               <button
                 onClick={() => setSelectedHotspot(null)}
-                className="text-slate-400 hover:text-slate-600 text-2xl"
+                className="text-slate-400 hover:text-slate-600 text-3xl w-10 h-10 flex items-center justify-center -mr-2 -mt-2"
+                aria-label="닫기"
               >
                 ×
               </button>
@@ -52,25 +105,82 @@ const HotspotDetailModal = () => {
 
             {/* 위치 정보 */}
             <div className="card mb-4 bg-slate-50">
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-slate-600">위도:</span>
-                  <span className="font-medium">{selectedHotspot.lat.toFixed(4)}°</span>
+              <div className="space-y-3">
+                {/* 주소 */}
+                <div>
+                  <span className="text-slate-600 text-xs block mb-1">위치</span>
+                  {/* 주소를 불러온 경우: 주소 크게, 좌표 작게 */}
+                  {address && address !== 'FAILED' && (
+                    <>
+                      <p className="font-bold text-slate-800 text-base">{address}</p>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {selectedHotspot.lat.toFixed(4)}°N, {selectedHotspot.lng.toFixed(4)}°E
+                      </p>
+                    </>
+                  )}
+                  {/* 주소를 불러오지 못한 경우: 좌표 크게, 메시지 작게 */}
+                  {address === 'FAILED' && (
+                    <>
+                      <p className="font-bold text-slate-800 text-base">
+                        {selectedHotspot.lat.toFixed(4)}°N, {selectedHotspot.lng.toFixed(4)}°E
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">주소를 불러오지 못했습니다</p>
+                    </>
+                  )}
+                  {/* 로딩 중 */}
+                  {!address && (
+                    <>
+                      <p className="font-bold text-slate-800 text-base">
+                        {selectedHotspot.lat.toFixed(4)}°N, {selectedHotspot.lng.toFixed(4)}°E
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">주소 로딩 중...</p>
+                    </>
+                  )}
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">경도:</span>
-                  <span className="font-medium">{selectedHotspot.lng.toFixed(4)}°</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">밀집도:</span>
-                  <span className="font-medium">{(selectedHotspot.intensity * 100).toFixed(1)}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">활동 건수:</span>
-                  <span className="font-medium">{formatNumber(selectedHotspot.activityCount)}건</span>
+
+                {/* 밀집도 및 활동 */}
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
+                  <div>
+                    <span className="text-slate-600 text-xs block mb-1">밀집도</span>
+                    <span className="font-bold text-ocean-primary text-base">
+                      {(selectedHotspot.intensity * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-slate-600 text-xs block mb-1">활동 건수</span>
+                    <span className="font-bold text-slate-800 text-base">
+                      {formatNumber(selectedHotspot.activityCount)}건
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* 영역 보너스 정보 */}
+            {bonusMultiplier > 1.0 && (
+              <div className={`card mb-4 ${isHighPriority ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-400' : 'bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300'}`}>
+                <div className="flex items-start gap-3">
+                  <div className="text-3xl">
+                    {isHighPriority ? '⭐' : '💎'}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`font-bold mb-1 ${isHighPriority ? 'text-amber-800' : 'text-blue-800'}`}>
+                      {isHighPriority ? '🔥 우선 정화 추천 구역' : '영역 보너스 적용'}
+                    </h3>
+                    <p className="text-sm text-slate-700 mb-2">
+                      {isHighPriority
+                        ? '밀집도가 높지만 기부 참여가 적은 지역입니다!'
+                        : '밀집도가 높은 지역입니다.'}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-bold px-3 py-1 rounded-full ${isHighPriority ? 'bg-amber-400 text-amber-900' : 'bg-blue-400 text-blue-900'}`}>
+                        동일 금액 {((bonusMultiplier - 1) * 100).toFixed(0)}% 더 넓은 영역
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* 정화 진행률 */}
             <div className="mb-4">
@@ -115,7 +225,7 @@ const HotspotDetailModal = () => {
             {/* 기부 버튼 */}
             <button
               onClick={handleDonate}
-              className="w-full btn btn-primary py-3 text-base shadow-lg"
+              className="w-full btn btn-primary py-4 text-base md:text-lg shadow-lg active:scale-95 transition-transform"
             >
               💝 이 지역에 기부하기
             </button>

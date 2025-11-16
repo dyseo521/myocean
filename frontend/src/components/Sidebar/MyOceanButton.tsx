@@ -1,3 +1,5 @@
+'use client'
+
 import { useStore } from '@/store/useStore';
 import { getUserDonations } from '@/utils/localStorage';
 
@@ -13,9 +15,9 @@ const MyOceanButton = () => {
   return (
     <button
       onClick={() => setShowMyOceanModal(true)}
-      className="btn btn-secondary text-sm w-full shadow-lg"
+      className="btn btn-secondary text-base w-full py-3 shadow-lg active:scale-95 transition-transform"
     >
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center gap-0.5">
         <span>🌊 나의 바다</span>
         {totalAmount > 0 && (
           <span className="text-xs opacity-90">

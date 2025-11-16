@@ -1,11 +1,11 @@
-import { DonationAmount } from '@/types';
+import { DonationAmount, Donation, Hotspot } from '@/types';
 
 // 기부 금액에 따른 영역 크기 계산 (km²)
 export const calculateDonationArea = (amount: DonationAmount): number => {
   const areaMap: Record<DonationAmount, number> = {
-    100000: 1,      // 10만원 = 1km²
-    1000000: 5,     // 100만원 = 5km²
-    10000000: 20,   // 1000만원 = 20km²
+    100000: 2,      // 10만원 = 2km²
+    1000000: 10,    // 100만원 = 10km²
+    10000000: 30,   // 1000만원 = 30km²
   };
   return areaMap[amount];
 };
@@ -72,4 +72,154 @@ export const simulateCleanupProgress = (donationDate: string): number => {
   // 100일에 100% 완료된다고 가정
   const progress = Math.min(100, (daysPassed / 100) * 100);
   return Math.floor(progress);
+};
+
+// 기부 금액과 중심 위치로부터 사각형 bounds 계산
+export const calculateDonationBounds = (
+  center: { lat: number; lng: number },
+  areaKm2: number
+): { southWest: { lat: number; lng: number }; northEast: { lat: number; lng: number } } => {
+  // 정사각형으로 가정: side = √area
+  const sideKm = Math.sqrt(areaKm2);
+
+  // 위도 1도 ≈ 111km
+  const latDegreeInKm = 111;
+  // 경도 1도 ≈ 111km * cos(위도) (부산 지역 기준 약 35도)
+  const lngDegreeInKm = 111 * Math.cos((center.lat * Math.PI) / 180);
+
+  // km를 도(degree)로 변환
+  const halfSideLat = (sideKm / 2) / latDegreeInKm;
+  const halfSideLng = (sideKm / 2) / lngDegreeInKm;
+
+  return {
+    southWest: {
+      lat: center.lat - halfSideLat,
+      lng: center.lng - halfSideLng,
+    },
+    northEast: {
+      lat: center.lat + halfSideLat,
+      lng: center.lng + halfSideLng,
+    },
+  };
+};
+
+// 기부 금액과 중심 위치로부터 마름모 모양의 폴리곤 좌표 계산
+export const calculateDiamondPolygon = (
+  center: { lat: number; lng: number },
+  areaKm2: number
+): Array<{ lat: number; lng: number }> => {
+  // 마름모의 대각선 길이 계산 (면적 = (d1 * d2) / 2, d1 = d2 가정)
+  const diagonalKm = Math.sqrt(areaKm2 * 2);
+
+  // 위도 1도 ≈ 111km
+  const latDegreeInKm = 111;
+  // 경도 1도 ≈ 111km * cos(위도)
+  const lngDegreeInKm = 111 * Math.cos((center.lat * Math.PI) / 180);
+
+  // km를 도(degree)로 변환
+  const halfDiagonalLat = (diagonalKm / 2) / latDegreeInKm;
+  const halfDiagonalLng = (diagonalKm / 2) / lngDegreeInKm;
+
+  // 마름모 4개 꼭지점 (상, 우, 하, 좌)
+  return [
+    { lat: center.lat + halfDiagonalLat, lng: center.lng },          // 북
+    { lat: center.lat, lng: center.lng + halfDiagonalLng },          // 동
+    { lat: center.lat - halfDiagonalLat, lng: center.lng },          // 남
+    { lat: center.lat, lng: center.lng - halfDiagonalLng },          // 서
+  ];
+};
+
+// 두 좌표 간 거리 계산 (km) - Haversine 공식
+export const calculateDistance = (
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number => {
+  const R = 6371; // 지구 반경 (km)
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+// 영역 겹침 체크 - 새로운 기부 위치가 기존 기부들과 겹치는지 확인
+export const checkAreaOverlap = (
+  newLocation: { lat: number; lng: number },
+  newArea: number,
+  existingDonations: Donation[]
+): boolean => {
+  // 다이아몬드의 대각선 길이 = √(2 * area) km
+  const newDiagonal = Math.sqrt(2 * newArea);
+  const newRadius = newDiagonal / 2; // 반대각선 (중심에서 꼭지점까지)
+
+  for (const donation of existingDonations) {
+    const existingDiagonal = Math.sqrt(2 * donation.area);
+    const existingRadius = existingDiagonal / 2;
+
+    // 두 중심점 간의 거리
+    const distance = calculateDistance(
+      newLocation.lat,
+      newLocation.lng,
+      donation.location.lat,
+      donation.location.lng
+    );
+
+    // 거리가 두 반경의 합보다 작으면 겹침
+    // 80% 이하일 때만 겹침으로 판단 (20% 정도는 겹쳐도 OK)
+    if (distance < (newRadius + existingRadius) * 0.8) {
+      return true; // 겹침
+    }
+  }
+
+  return false; // 겹치지 않음
+};
+
+// 특정 핫스팟에 대한 총 기부금 계산 (거리 기반)
+export const calculateTotalDonationForHotspot = (
+  hotspot: Hotspot,
+  donations: Donation[]
+): number => {
+  // 핫스팟 반경 (기본 10km)
+  const HOTSPOT_RADIUS_KM = 10;
+
+  return donations
+    .filter(d => {
+      // 핫스팟 중심에서 반경 내의 모든 기부를 합산
+      const distance = calculateDistance(
+        hotspot.lat,
+        hotspot.lng,
+        d.location.lat,
+        d.location.lng
+      );
+      return distance <= HOTSPOT_RADIUS_KM;
+    })
+    .reduce((sum, d) => sum + d.amount, 0);
+};
+
+// 핫스팟의 펀딩 완료 여부 확인 (목표금액의 70% 이상이면 수거 가능)
+export const isFundingComplete = (
+  hotspot: Hotspot,
+  donations: Donation[]
+): boolean => {
+  if (!hotspot.targetAmount) return false;
+
+  const totalDonation = calculateTotalDonationForHotspot(hotspot, donations);
+  const FUNDING_THRESHOLD = 0.7; // 70% 이상이면 수거 가능
+  return totalDonation >= hotspot.targetAmount * FUNDING_THRESHOLD;
+};
+
+// 핫스팟의 펀딩 진행률 계산 (0-100%)
+export const calculateFundingProgress = (
+  hotspot: Hotspot,
+  donations: Donation[]
+): number => {
+  if (!hotspot.targetAmount) return 0;
+
+  const totalDonation = calculateTotalDonationForHotspot(hotspot, donations);
+  return Math.min(100, Math.floor((totalDonation / hotspot.targetAmount) * 100));
 };

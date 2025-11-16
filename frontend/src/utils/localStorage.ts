@@ -3,19 +3,25 @@ import { Donation, User } from '@/types';
 const DONATIONS_KEY = 'myocean_donations';
 const USER_KEY = 'myocean_user';
 
+// 브라우저 환경 체크
+const isBrowser = typeof window !== 'undefined';
+
 // 기부 데이터 관련
 export const getDonations = (): Donation[] => {
+  if (!isBrowser) return [];
   const stored = localStorage.getItem(DONATIONS_KEY);
   return stored ? JSON.parse(stored) : [];
 };
 
 export const saveDonation = (donation: Donation): void => {
+  if (!isBrowser) return;
   const donations = getDonations();
   donations.push(donation);
   localStorage.setItem(DONATIONS_KEY, JSON.stringify(donations));
 };
 
 export const updateDonationProgress = (donationId: string, progress: number): void => {
+  if (!isBrowser) return;
   const donations = getDonations();
   const updated = donations.map(d =>
     d.id === donationId ? { ...d, cleanupProgress: Math.min(100, progress) } : d
@@ -29,15 +35,18 @@ export const getUserDonations = (userName: string): Donation[] => {
 
 // 사용자 데이터 관련
 export const getCurrentUser = (): User | null => {
+  if (!isBrowser) return null;
   const stored = localStorage.getItem(USER_KEY);
   return stored ? JSON.parse(stored) : null;
 };
 
 export const setCurrentUser = (user: User): void => {
+  if (!isBrowser) return;
   localStorage.setItem(USER_KEY, JSON.stringify(user));
 };
 
 export const logout = (): void => {
+  if (!isBrowser) return;
   localStorage.removeItem(USER_KEY);
 };
 
@@ -64,12 +73,15 @@ export const getTopDonors = (limit: number = 10) => {
   });
 
   return Array.from(donorMap.entries())
-    .map(([name, data], index) => ({
-      rank: index + 1,
+    .map(([name, data]) => ({
       name,
       amount: data.amount,
       donationCount: data.count,
     }))
     .sort((a, b) => b.amount - a.amount)
-    .slice(0, limit);
+    .slice(0, limit)
+    .map((donor, index) => ({
+      ...donor,
+      rank: index + 1,
+    }));
 };

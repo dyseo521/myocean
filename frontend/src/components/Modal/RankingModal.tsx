@@ -1,3 +1,5 @@
+'use client'
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { getTopDonors } from '@/utils/localStorage';
@@ -20,24 +22,25 @@ const RankingModal = () => {
 
   return (
     <AnimatePresence>
-      <div className="modal-backdrop" onClick={() => setShowRankingModal(false)}>
+      <div className="absolute inset-0 bg-black bg-opacity-50 z-50" onClick={() => setShowRankingModal(false)}>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="modal-container"
+          className="absolute inset-0 flex items-end justify-center p-0"
         >
-          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
+          <div className="bg-white rounded-t-3xl shadow-2xl p-6 w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
             {/* 헤더 */}
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">🏆 기부 랭킹</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-800">🏆 기부 랭킹</h2>
                 <p className="text-sm text-slate-600 mt-1">바다를 지킨 영웅들</p>
               </div>
               <button
                 onClick={() => setShowRankingModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-2xl"
+                className="text-slate-400 hover:text-slate-600 text-3xl w-10 h-10 flex items-center justify-center -mr-2 -mt-2"
+                aria-label="닫기"
               >
                 ×
               </button>
